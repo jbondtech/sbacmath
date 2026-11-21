@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SBAC Elementary Math Practice & Teacher Console</title>
+  <title>SBAC Elementary Math Assessment Console</title>
   
-  <!-- IBM Plex Sans & IBM Plex Mono Fonts -->
+  <!-- IBM Plex Fonts & Lucide Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
@@ -21,274 +19,334 @@
       --on-primary: #ffffff;
       --secondary: #393939;
       --secondary-hover: #4c4c4c;
-      --tertiary: #198038;
-      --surface: #f4f4f4;
-      --surface-card: #ffffff;
+      --surface: #ffffff;
+      --surface-variant: #f4f4f4;
+      --background: #f4f7fb;
       --on-surface: #161616;
       --on-surface-variant: #525252;
       --outline: #e0e0e0;
       --outline-variant: #8d8d8d;
       --error: #da1e28;
-      --error-container: #fff1f1;
+      --success: #198038;
       --warning: #f1c21b;
-      --success: #24a148;
-      --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-main: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'IBM Plex Mono', monospace;
+      --shadow-1: 0 2px 6px rgba(0,0,0,0.08);
+      --shadow-2: 0 4px 16px rgba(0,0,0,0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font-sans);
-      background-color: var(--surface);
+      font-family: var(--font-main);
+      background: var(--background);
       color: var(--on-surface);
       line-height: 1.5;
+      font-size: 15px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* Top Blue Header */
+    /* Top Royal Blue Header Bar */
     .sbac-header {
-      background-color: #002d9c;
+      background: #0f62fe;
       color: #ffffff;
-      padding: 10px 20px;
+      height: 56px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 100;
+      box-shadow: var(--shadow-1);
+      z-index: 50;
     }
     .header-left { display: flex; align-items: center; gap: 16px; }
-    .brand-title { font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .badge-pill {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.18);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
     }
     .header-right { display: flex; align-items: center; gap: 12px; }
     .timer-badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: 0.9rem;
       display: flex;
       align-items: center;
       gap: 6px;
+      background: rgba(0,0,0,0.2);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
     }
 
-    /* Header Buttons */
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 6px 14px;
-      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: var(--font-main);
+      font-size: 0.88rem;
       font-weight: 600;
-      border-radius: 4px;
-      border: 1px solid transparent;
       cursor: pointer;
+      border: 1px solid transparent;
       transition: all 0.15s ease;
-      font-family: var(--font-sans);
     }
-    .btn-header-ghost {
-      background: transparent;
-      color: #ffffff;
-      border: 1px solid rgba(255,255,255,0.4);
-    }
-    .btn-header-ghost:hover { background: rgba(255,255,255,0.15); }
-    .btn-header-light {
-      background: #ffffff;
-      color: #002d9c;
-      border: 1px solid #ffffff;
-    }
-    .btn-header-light:hover { background: #e8f0fe; }
-    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary { background: var(--primary); color: var(--on-primary); }
     .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary { background: var(--secondary); color: #ffffff; }
-    .btn-secondary:hover { background: var(--secondary-hover); }
-    .btn-ghost { background: transparent; color: var(--on-surface); border: 1px solid var(--outline); }
-    .btn-ghost:hover { background: #e0e0e0; }
+    .btn-secondary { background: #e0e0e0; color: var(--on-surface); border-color: #cccccc; }
+    .btn-secondary:hover { background: #d0d0d0; }
+    .btn-ghost { background: transparent; color: var(--on-surface); }
+    .btn-ghost:hover { background: var(--surface-variant); }
 
-    /* Student Preview Banner */
+    /* Preview Banner */
     .preview-banner {
-      background: #8a3800;
-      color: #ffffff;
-      padding: 6px 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      background: #f1c21b;
+      color: #161616;
+      padding: 8px 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid #d4a706;
     }
 
-    /* Secondary Accessibility Toolbar */
+    /* Toolbar Bar */
     .sbac-toolbar {
       background: #ffffff;
       border-bottom: 1px solid var(--outline);
-      padding: 6px 20px;
+      padding: 8px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .toolbar-nav-strip { display: flex; align-items: center; gap: 4px; }
+    .toolbar-nav-strip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
     .q-btn {
-      width: 34px; height: 32px;
+      width: 38px;
+      height: 34px;
       border-radius: 4px;
       border: 1px solid var(--outline);
       background: #ffffff;
+      color: var(--on-surface);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
       font-weight: 600;
-      font-size: 0.85rem;
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.12s ease;
     }
-    .q-btn:hover { background: var(--surface); }
-    .q-btn.active { border-color: var(--primary); background: var(--primary-container); color: var(--primary); font-weight: 700; }
-    .q-btn.answered { background: #e8f5e9; border-color: #81c784; color: #2e7d32; }
+    .q-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .q-btn.answered { background: var(--primary-container); border-color: var(--primary); color: var(--primary); }
+    .q-btn.active { outline: 2.5px solid var(--primary); font-weight: 700; }
     .q-btn.flagged::after {
-      content: "•";
-      color: var(--error);
-      font-size: 1.2rem;
-      line-height: 0;
-      margin-left: 1px;
+      content: '';
+      position: absolute;
+      top: 2px; right: 2px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--error);
     }
     .toolbar-tools { display: flex; align-items: center; gap: 8px; }
 
-    /* Main Container Views */
-    .view-container { display: none; flex: 1; padding: 16px 20px; }
+    /* Main Container & Workspaces */
+    .view-container { display: none; flex: 1; }
     .view-container.active { display: flex; flex-direction: column; }
 
-    /* Student Test Workspace */
-    .test-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; }
-    @media (max-width: 850px) { .test-workspace { grid-template-columns: 1fr; } }
-    
-    .card-panel {
-      background: #ffffff;
-      border-radius: 6px;
-      border: 1px solid var(--outline);
+    /* Student Workspace Layout */
+    .test-workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+    @media (max-width: 900px) {
+      .test-workspace { grid-template-columns: 1fr; }
     }
 
-    .item-meta-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--outline); padding-bottom: 8px; }
-    .item-type-pill { background: #edf5ff; color: #0f62fe; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-    
+    .card-panel {
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid var(--outline);
+      padding: 24px;
+      box-shadow: var(--shadow-1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+    .item-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--outline);
+      padding-bottom: 12px;
+    }
+    .item-type-pill {
+      background: #e8f0fe;
+      color: var(--primary);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Diagram & Stem Styling */
+    .stem-content { font-size: 1rem; color: #161616; line-height: 1.6; }
     .diagram-box {
+      background: #fafafa;
       border: 1px solid var(--outline);
       border-radius: 6px;
-      padding: 12px;
-      background: #fafafa;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      margin-top: 10px;
     }
 
-    /* Option Items */
-    .option-list { display: flex; flex-direction: column; gap: 8px; }
+    /* Carbon Form Inputs */
+    .carbon-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--outline-variant);
+      border-radius: 4px;
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      background: #ffffff;
+    }
+    .carbon-input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+
+    /* Multiple Choice & Select Options */
+    .option-list { display: flex; flex-direction: column; gap: 10px; }
     .option-item {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border: 1px solid var(--outline);
       border-radius: 6px;
       cursor: pointer;
       background: #ffffff;
-      transition: all 0.15s ease;
+      transition: all 0.12s ease;
     }
-    .option-item:hover { background: #f4f4f4; }
+    .option-item:hover { border-color: var(--primary); background: #f8fbff; }
     .option-item.selected { border-color: var(--primary); background: var(--primary-container); }
-    .option-item.struck { text-decoration: line-through; opacity: 0.5; background: #f9f9f9; }
+    .option-item.struck { text-decoration: line-through; opacity: 0.55; background: #f4f4f4; }
     .opt-key {
+      font-family: var(--font-mono);
       font-weight: 700;
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      border: 1px solid var(--outline-variant);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem;
-      flex-shrink: 0;
+      color: var(--primary);
+      width: 24px;
     }
-    .option-item.selected .opt-key { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
-    /* Inputs */
-    .carbon-input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid var(--outline-variant);
-      border-radius: 4px;
-      font-family: var(--font-sans);
-      font-size: 0.95rem;
-      outline: none;
-    }
-    .carbon-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2); }
-
-    /* Inline Keypad */
-    .inline-keypad-box {
-      margin-top: 10px;
-      background: #f8f9fa;
+    /* Matching Grid Table */
+    .matching-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .matching-table th, .matching-table td {
       border: 1px solid var(--outline);
-      border-radius: 6px;
-      padding: 10px;
-      width: 240px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
     }
-    .keypad-grid {
+    .matching-table th { background: #f4f4f4; font-weight: 600; text-align: left; }
+    .matching-table td.center { text-align: center; width: 70px; }
+
+    /* Embedded Math Keypad Grid (Type A) */
+    .inline-keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      margin-top: 6px;
+      max-width: 280px;
+      margin-top: 12px;
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--outline);
     }
     .key-btn {
-      padding: 8px 0;
-      text-align: center;
-      background: #ffffff;
-      border: 1px solid var(--outline);
+      height: 38px;
       border-radius: 4px;
-      font-weight: 600;
+      border: 1px solid var(--outline);
+      background: #ffffff;
       font-family: var(--font-mono);
-      font-size: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .key-btn:hover { background: var(--surface); }
-    .key-btn.action { background: #e0e0e0; }
+    .key-btn:hover { background: #e8e8e8; }
+    .key-btn.action { background: #e0e0e0; font-weight: 700; }
 
-    /* Matching Table */
-    .matching-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .matching-table th, .matching-table td { border: 1px solid var(--outline); padding: 8px 10px; }
-    .matching-table th { background: #f4f4f4; text-align: left; }
-    .matching-table th.center, .matching-table td.center { text-align: center; }
+    /* Bottom Action Bar */
+    .item-nav-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--outline);
+    }
 
     /* Teacher Admin Layout */
     .admin-card {
+      max-width: 1000px;
+      margin: 30px auto;
       background: #ffffff;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid var(--outline);
-      padding: 24px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      padding: 30px;
+      box-shadow: var(--shadow-2);
+      width: 100%;
     }
-    .admin-tab-bar { display: flex; gap: 8px; border-bottom: 2px solid var(--outline); padding-bottom: 8px; }
+    .admin-tab-bar {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--outline);
+      margin-bottom: 24px;
+    }
     .tab-btn {
-      padding: 8px 16px;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.92rem;
       border: none;
       background: transparent;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--on-surface-variant);
       cursor: pointer;
+      color: var(--on-surface-variant);
       border-bottom: 3px solid transparent;
-      margin-bottom: -11px;
+      margin-bottom: -2px;
     }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
@@ -309,24 +367,24 @@
       border-radius: 8px;
       max-width: 650px;
       width: 100%;
+      padding: 24px;
+      box-shadow: var(--shadow-2);
       max-height: 90vh;
       overflow-y: auto;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
-    /* DRAGGABLE FLOATING SCRATCHPAD */
+    /* FLOATING NON-BLOCKING SCRATCHPAD BOX */
     .scratchpad-floating-box {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 440px;
-      height: 380px;
+      width: 420px;
+      height: 360px;
       background: #ffffff;
       border: 2px solid var(--primary);
       border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      z-index: 200;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      z-index: 120;
       display: none;
       flex-direction: column;
       overflow: hidden;
@@ -341,30 +399,25 @@
       justify-content: space-between;
       font-size: 0.85rem;
       font-weight: 600;
-      cursor: grab;
-      user-select: none;
     }
-    .scratchpad-header:active { cursor: grabbing; }
     .scratchpad-tools { display: flex; gap: 6px; }
     .scratch-tool-btn {
       background: rgba(255,255,255,0.2);
       color: #ffffff;
       border: none;
-      padding: 2px 8px;
-      border-radius: 3px;
+      padding: 4px 8px;
+      border-radius: 4px;
       font-size: 0.75rem;
-      font-weight: 600;
       cursor: pointer;
     }
-    .scratch-tool-btn:hover { background: rgba(255,255,255,0.35); }
     .scratch-tool-btn.active { background: #ffffff; color: var(--primary); font-weight: 700; }
     #scratchpad-canvas {
       flex: 1;
       width: 100%;
       height: 100%;
       background: #ffffff;
-      touch-action: none;
       cursor: crosshair;
+      touch-action: none;
     }
   </style>
 </head>
@@ -377,23 +430,19 @@
         <i data-lucide="calculator" style="width:22px;height:22px;"></i>
         <span>SBAC Elementary Math Practice</span>
       </div>
-      <div class="badge-pill" id="form-pill-display">TEST • ENROLLED GR 4 → TEST GR 4</div>
+      <div class="badge-pill" id="form-pill-display">SETUP • TEACHER ADMIN PORTAL</div>
     </div>
     <div class="header-right">
       <div class="timer-badge" id="timer-badge-box" style="display:none;">
         <i data-lucide="clock" style="width:16px;height:16px;"></i>
         <span id="timer-display">TIME 00:00</span>
       </div>
-      <div id="admin-view-toggle-group" style="display:flex;gap:6px;">
-        <button type="button" class="btn btn-header-ghost" id="tab-btn-student" onclick="showView('student')">STUDENT TEST</button>
-        <button type="button" class="btn btn-header-ghost" id="tab-btn-admin" onclick="showView('admin')">TEACHER ADMIN</button>
-      </div>
     </div>
   </header>
 
-  <!-- Student Preview Banner -->
+  <!-- Teacher Student Preview Banner -->
   <div class="preview-banner" id="student-preview-banner" style="display:none;">
-    <span>👀 STUDENT PREVIEW MODE — Viewing exact student test interface</span>
+    <span>👀 STUDENT PREVIEW MODE — Testing as student link layout</span>
     <button type="button" class="btn btn-secondary" onclick="exitStudentPreview()" style="min-height:28px;padding:2px 10px;font-size:0.8rem;">Exit Student Preview</button>
   </div>
 
@@ -447,20 +496,20 @@
           <!-- Interactive Controls -->
         </div>
 
-        <!-- Bottom Action Bar (Previous, Next, Review Answers) -->
-        <div id="item-nav-actions" style="margin-top:auto;padding-top:16px;border-top:1px solid var(--outline);display:flex;align-items:center;justify-content:flex-end;gap:8px;">
-          <!-- Populated dynamically -->
+        <!-- Bottom Action Navigation -->
+        <div class="item-nav-actions" id="item-nav-actions">
+          <!-- Previous, Next, Review Answers -->
         </div>
       </div>
     </div>
   </main>
 
-  <!-- VIEW 2: TEACHER ADMIN PORTAL -->
+  <!-- VIEW 2: TEACHER ADMIN PORTAL (DEFAULT SETUP VIEW) -->
   <main class="view-container active" id="view-admin">
     <div class="admin-card">
       <div class="admin-tab-bar">
         <button class="tab-btn active" onclick="showAdminSubtab('links', this)">Share Links &amp; Student Preview</button>
-        <button class="tab-btn" onclick="showAdminSubtab('importer', this)">JSON Test Editor &amp; Importer</button>
+        <button class="tab-btn" onclick="showAdminSubtab('importer', this)">JSON Test Importer</button>
         <button class="tab-btn" onclick="showAdminSubtab('gas', this)">Google Apps Script Webhook</button>
         <button class="tab-btn" onclick="showAdminSubtab('history', this)">Attempt History</button>
       </div>
@@ -492,23 +541,28 @@
         </div>
       </div>
 
-      <!-- Subtab 2: JSON Importer & Form Editor -->
+      <!-- Subtab 2: JSON Test Form Editor & Importer -->
       <div id="admin-subtab-importer" style="display:none;flex-direction:column;gap:16px;">
         <h3 style="font-size:1.1rem;font-weight:700;">JSON Test Form Editor &amp; Importer</h3>
         <p style="font-size:0.9rem;color:var(--on-surface-variant);">
-          Select any form from the dropdown to view or edit its raw JSON, or paste a new JSON test object below.
+          Select any test form from the dropdown below to view and edit its complete JSON structure. You can edit existing questions, prompts, diagrams, and answer keys directly, or paste a new custom JSON form.
         </p>
         <div style="display:flex;gap:12px;align-items:center;">
           <label style="font-weight:600;">Select Form to Edit:</label>
-          <select id="editor-form-selector" class="carbon-input" style="width:auto;" onchange="loadFormIntoEditor(this.value)">
-            <option value="G3-FORM-A">Grade 3 — Form A</option>
-            <option value="G4-FORM-A" selected>Grade 4 — Form A</option>
-            <option value="G5-FORM-A">Grade 5 — Form A</option>
-            <option value="G6-FORM-A">Grade 6 — Form A</option>
+          <select id="admin-form-selector-editor" class="carbon-input" style="width:auto;" onchange="loadFormById(this.value)">
+            <option value="G3-FORM-A">Grade 3 — Form A (Core 8 Items)</option>
+            <option value="G4-FORM-A" selected>Grade 4 — Form A (Core 8 Items)</option>
+            <option value="G5-FORM-A">Grade 5 — Form A (Core 8 Items)</option>
+            <option value="G6-FORM-A">Grade 6 — Form A (Core 8 Items)</option>
           </select>
         </div>
-        <textarea id="json-import-textarea" class="carbon-input" style="height:220px;font-family:var(--font-mono);font-size:0.85rem;" placeholder='Paste JSON here (must include "id", "title", "grade", and "items" array)...'></textarea>
-        <button type="button" class="btn btn-primary" style="width:max-content;" onclick="importCustomJson()">Save / Update Form JSON</button>
+        <textarea id="json-import-textarea" class="carbon-input" style="height:320px;font-family:var(--font-mono);font-size:0.85rem;" placeholder='JSON form data will appear here...'></textarea>
+        <div style="display:flex;gap:12px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" style="width:max-content;" onclick="importCustomJson()">Save / Update Form JSON</button>
+          <button type="button" class="btn btn-secondary" style="width:max-content;background:#057a55;color:#ffffff;border:none;" onclick="downloadStandaloneAppHtml()">📥 Download Standalone Student Test (.html)</button>
+        </div>
+        </div>
       </div>
 
       <!-- Subtab 3: GAS Webhook -->
@@ -546,7 +600,7 @@
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div>
           <label style="font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;">First &amp; Last Name</label>
-          <input type="text" id="entry-student-name" class="carbon-input" placeholder="e.g. Alex Johnson" value="Practice Student">
+          <input type="text" id="entry-student-name" class="carbon-input" placeholder="e.g. Maya Lin">
         </div>
         <div>
           <label style="font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;">Enrolled Grade Level</label>
@@ -565,40 +619,54 @@
   <!-- REVIEW ANSWERS MODAL -->
   <div class="modal-backdrop" id="review-answers-modal">
     <div class="modal-box" style="max-width:700px;">
-      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">Review Your Answers</h2>
-      <p style="font-size:0.85rem;color:var(--on-surface-variant);margin-bottom:12px;">
-        Review your test progress below. Click on any question to jump back and change your answer.
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:6px;">Review Your Test Answers</h2>
+      <p style="font-size:0.88rem;color:var(--on-surface-variant);margin-bottom:16px;">
+        Check your completed questions below before submitting. You can click any item to return to it.
       </p>
-      <div id="review-modal-summary" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;background:#f8f9fa;padding:12px;border-radius:6px;border:1px solid var(--outline);">
-        <!-- Summary Stats -->
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;background:#f4f4f4;padding:12px;border-radius:6px;text-align:center;">
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--on-surface-variant);">TOTAL</div>
+          <div style="font-size:1.3rem;font-weight:700;" id="review-total-count">8</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--success);">COMPLETED</div>
+          <div style="font-size:1.3rem;font-weight:700;color:var(--success);" id="review-completed-count">0</div>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;color:var(--error);">NOT COMPLETED</div>
+          <div style="font-size:1.3rem;font-weight:700;color:var(--error);" id="review-remaining-count">8</div>
+        </div>
       </div>
-      <div id="review-modal-item-list" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;margin-bottom:16px;">
-        <!-- Question items -->
+
+      <div id="review-items-list" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;margin-bottom:20px;">
+        <!-- Dynamic list of items -->
       </div>
-      <div style="display:flex;justify-content:flex-end;gap:12px;border-top:1px solid var(--outline);padding-top:12px;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--outline);padding-top:16px;">
         <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Go Back to Test</button>
         <button type="button" class="btn btn-primary" style="background:var(--success);color:#ffffff;" onclick="confirmFinalSubmission()">Submit Test</button>
       </div>
     </div>
   </div>
 
-  <!-- DIAGNOSTIC SCORE REPORT MODAL -->
+  <!-- SCORE REPORT MODAL -->
   <div class="modal-backdrop" id="score-report-modal">
     <div class="modal-box" style="max-width:750px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <h2 style="font-size:1.3rem;font-weight:700;">Diagnostic Score Report</h2>
         <button type="button" class="btn btn-ghost" onclick="closeScoreReport()">Close</button>
       </div>
-      <div id="score-report-modal-body">
-        <!-- Body generated dynamically -->
+      <div id="score-report-body">
+        <!-- Diagnostic Summary -->
       </div>
     </div>
   </div>
 
-  <!-- MOVABLE DRAGGABLE FLOATING SCRATCHPAD WINDOW -->
+  <!-- NON-BLOCKING FLOATING SCRATCHPAD WINDOW -->
   <div class="scratchpad-floating-box" id="scratchpad-floating-window">
-    <div class="scratchpad-header" id="scratchpad-drag-header">
-      <span>⋮⋮ ✏️ Scratchpad Canvas (Drag to Move)</span>
+    <div class="scratchpad-header">
+      <span>✏️ Scratchpad Canvas</span>
       <div class="scratchpad-tools">
         <button type="button" class="scratch-tool-btn active" id="tool-pen-btn" onclick="setScratchTool('pen')">Pen</button>
         <button type="button" class="scratch-tool-btn" id="tool-eraser-btn" onclick="setScratchTool('eraser')">Eraser</button>
@@ -612,6 +680,400 @@
   <script>
     /* Built-in SBAC Test Forms */
     const FORMS = {
+      "G3-FULL-SUMMATIVE-FORM-B": {
+      "id": "G3-FULL-SUMMATIVE-FORM-B",
+      "title": "Grade 3 Mathematics \u2014 Comprehensive Summative Assessment (Form B)",
+      "grade": 3,
+      "items": [
+            {
+                  "id": "G3-01",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.OA.A.3",
+                  "claim": 1,
+                  "stimulus": "<p>A third-grade teacher arranges desks in the classroom into equal rows for a science activity. There are <strong>6 rows</strong> with <strong>7 desks</strong> in each row.</p>",
+                  "prompt": "How many desks are in the classroom in all?",
+                  "instruction": "Type a whole number using the keypad or keyboard.",
+                  "diagramType": "array",
+                  "diagramData": {
+                        "rows": 6,
+                        "cols": 7,
+                        "label": "6 rows of 7 desks"
+                  },
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 42,
+                        "unit": "desks"
+                  }
+            },
+            {
+                  "id": "G3-02",
+                  "type": "D",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.NF.A.1",
+                  "claim": 1,
+                  "stimulus": "<p>A garden bed is divided into <strong>8 equal sections</strong>. Maya plants tomatoes in <strong>3/8</strong> of the garden bed.</p>",
+                  "prompt": "Click sections on the bar model to shade 3/8 of the garden bed.",
+                  "instruction": "Click sections to shade or unshade.",
+                  "diagramType": "fractionBarStatic",
+                  "diagramData": {
+                        "total": 8,
+                        "note": "8 equal parts"
+                  },
+                  "rubric": {
+                        "kind": "shading",
+                        "totalParts": 8,
+                        "targetShaded": 3
+                  }
+            },
+            {
+                  "id": "G3-03",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.OA.D.8",
+                  "claim": 2,
+                  "stimulus": "<p>There are <strong>9 cherry trees</strong> in an orchard. Kim picks <strong>8 cherries</strong> from each tree. Then Kim eats <strong>14</strong> of the cherries she picked.</p>",
+                  "prompt": "Enter the number of cherries Kim has left.",
+                  "instruction": "Use the Math Keypad or keyboard to enter a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 58,
+                        "unit": "cherries"
+                  }
+            },
+            {
+                  "id": "G3-04",
+                  "type": "B",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.OA.B.5",
+                  "claim": 3,
+                  "stimulus": "<p>Libby tried to solve the multiplication problem <strong>5 \u00d7 2 \u00d7 3</strong>. Her work is shown below:</p><ul><li>Step 1: 5 \u00d7 2 = 10</li><li>Step 2: 5 \u00d7 3 = 15</li><li>Step 3: 10 + 15 = 25</li></ul>",
+                  "prompt": "Which statement correctly explains why Libby's answer is incorrect?",
+                  "instruction": "Select the single best answer.",
+                  "options": [
+                        {
+                              "id": "A",
+                              "text": "Libby's answer is correct because 10 + 15 = 25."
+                        },
+                        {
+                              "id": "B",
+                              "text": "Libby's answer is correct because 2 + 3 = 5 and 5 \u00d7 5 = 25."
+                        },
+                        {
+                              "id": "C",
+                              "text": "Libby's answer is incorrect because she multiplied 5 \u00d7 2 and 5 \u00d7 3 instead of multiplying 10 \u00d7 3."
+                        },
+                        {
+                              "id": "D",
+                              "text": "Libby's answer is incorrect because she should have added 5 + 2 + 3."
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "exact",
+                        "expected": "C"
+                  }
+            },
+            {
+                  "id": "G3-05",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.NBT.A.2",
+                  "claim": 1,
+                  "stimulus": "<p>A baker has <strong>159 cups of brown sugar</strong> and <strong>264 cups of white sugar</strong>.</p>",
+                  "prompt": "How many total cups of sugar does the baker have?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 423,
+                        "unit": "cups"
+                  }
+            },
+            {
+                  "id": "G3-06",
+                  "type": "C",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.NF.A.3d",
+                  "claim": 1,
+                  "stimulus": "<p>Decide whether each fraction comparison is True or False.</p>",
+                  "diagramType": "numberLineCompare",
+                  "diagramData": {
+                        "min": 0,
+                        "max": 1,
+                        "labels": [
+                              "0",
+                              "1/4",
+                              "1/2",
+                              "3/4",
+                              "1"
+                        ]
+                  },
+                  "prompt": "Select True or False for each comparison.",
+                  "instruction": "Select one choice in each row.",
+                  "rows": [
+                        {
+                              "id": "r1",
+                              "text": "2/4 is equivalent to 1/2"
+                        },
+                        {
+                              "id": "r2",
+                              "text": "3/8 is greater than 5/8"
+                        },
+                        {
+                              "id": "r3",
+                              "text": "2/6 is less than 4/6"
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "grid",
+                        "expected": {
+                              "r1": "True",
+                              "r2": "False",
+                              "r3": "True"
+                        }
+                  }
+            },
+            {
+                  "id": "G3-07",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 3,
+                  "ccss": "3.OA.D.8",
+                  "claim": 4,
+                  "stimulus": "<p>Jamal's mother is organizing a trip for the baseball team.</p><ul><li>There are <strong>14 players</strong> on the team.</li><li>There are <strong>5 parents</strong> going on the trip.</li><li>Each car can hold a total of <strong>5 people</strong>.</li><li>There must be at least 1 parent in each car.</li></ul>",
+                  "prompt": "What is the fewest number of cars they will need to transport all players and parents?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 4,
+                        "unit": "cars"
+                  }
+            },
+            {
+                  "id": "G3-08",
+                  "type": "E",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.OA.A.1",
+                  "claim": 1,
+                  "stimulus": "<p>Select all the expressions that can be represented by 4 groups of 6 items.</p>",
+                  "prompt": "Select all the correct expressions.",
+                  "instruction": "Select all that apply.",
+                  "options": [
+                        {
+                              "id": "A",
+                              "text": "4 \u00d7 6"
+                        },
+                        {
+                              "id": "B",
+                              "text": "6 + 6 + 6 + 6"
+                        },
+                        {
+                              "id": "C",
+                              "text": "4 + 6"
+                        },
+                        {
+                              "id": "D",
+                              "text": "6 \u00d7 4"
+                        },
+                        {
+                              "id": "E",
+                              "text": "24 \u00f7 4"
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "exactSet",
+                        "expected": [
+                              "A",
+                              "B",
+                              "D"
+                        ]
+                  }
+            },
+            {
+                  "id": "G3-09",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.MD.C.7b",
+                  "claim": 1,
+                  "stimulus": "<p>A rectangular playground carpet is <strong>8 meters long</strong> and <strong>5 meters wide</strong>.</p>",
+                  "diagramType": "areaRect",
+                  "diagramData": {
+                        "length": 8,
+                        "width": 5,
+                        "unit": "m"
+                  },
+                  "prompt": "What is the area of the playground carpet in square meters?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 40,
+                        "unit": "sq meters"
+                  }
+            },
+            {
+                  "id": "G3-10",
+                  "type": "B",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.OA.B.6",
+                  "claim": 1,
+                  "stimulus": "<p>Susan has 3 times as many books as Mary. Mary has 18 books.</p>",
+                  "prompt": "Which equation can be solved to figure out how many books Susan has?",
+                  "instruction": "Select the single correct equation.",
+                  "options": [
+                        {
+                              "id": "A",
+                              "text": "\u25a1 - 3 = 18"
+                        },
+                        {
+                              "id": "B",
+                              "text": "3 + 18 = \u25a1"
+                        },
+                        {
+                              "id": "C",
+                              "text": "18 \u00f7 \u25a1 = 3"
+                        },
+                        {
+                              "id": "D",
+                              "text": "3 \u00d7 18 = \u25a1"
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "exact",
+                        "expected": "D"
+                  }
+            },
+            {
+                  "id": "G3-11",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.MD.D.8",
+                  "claim": 1,
+                  "stimulus": "<p>A square tile has side lengths of <strong>7 inches</strong>.</p>",
+                  "prompt": "What is the perimeter of the square tile in inches?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 28,
+                        "unit": "inches"
+                  }
+            },
+            {
+                  "id": "G3-12",
+                  "type": "C",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.G.A.1",
+                  "claim": 1,
+                  "stimulus": "<p>Determine whether each shape description is True or False for a quadrilateral.</p>",
+                  "prompt": "Select True or False for each statement.",
+                  "instruction": "Select one response per row.",
+                  "rows": [
+                        {
+                              "id": "r1",
+                              "text": "A rectangle is always a quadrilateral."
+                        },
+                        {
+                              "id": "r2",
+                              "text": "A triangle is a quadrilateral."
+                        },
+                        {
+                              "id": "r3",
+                              "text": "A square has 4 sides and 4 right angles."
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "grid",
+                        "expected": {
+                              "r1": "True",
+                              "r2": "False",
+                              "r3": "True"
+                        }
+                  }
+            },
+            {
+                  "id": "G3-13",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 1,
+                  "ccss": "3.NBT.A.1",
+                  "claim": 1,
+                  "stimulus": "<p>Round the number <strong>347</strong> to the nearest ten.</p>",
+                  "prompt": "What is 347 rounded to the nearest ten?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 350
+                  }
+            },
+            {
+                  "id": "G3-14",
+                  "type": "E",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.OA.C.7",
+                  "claim": 3,
+                  "stimulus": "<p>Select all the multiplication facts that equal 36.</p>",
+                  "prompt": "Select all equations that have a product of 36.",
+                  "instruction": "Select all that apply.",
+                  "options": [
+                        {
+                              "id": "A",
+                              "text": "6 \u00d7 6"
+                        },
+                        {
+                              "id": "B",
+                              "text": "4 \u00d7 9"
+                        },
+                        {
+                              "id": "C",
+                              "text": "5 \u00d7 7"
+                        },
+                        {
+                              "id": "D",
+                              "text": "9 \u00d7 4"
+                        },
+                        {
+                              "id": "E",
+                              "text": "3 \u00d7 12"
+                        }
+                  ],
+                  "rubric": {
+                        "kind": "exactSet",
+                        "expected": [
+                              "A",
+                              "B",
+                              "D",
+                              "E"
+                        ]
+                  }
+            },
+            {
+                  "id": "G3-15",
+                  "type": "A",
+                  "points": 1,
+                  "dok": 2,
+                  "ccss": "3.MD.A.1",
+                  "claim": 2,
+                  "stimulus": "<p>Recess starts at <strong>10:15 AM</strong> and ends at <strong>10:45 AM</strong>.</p>",
+                  "prompt": "How many minutes long is recess?",
+                  "instruction": "Type a whole number.",
+                  "rubric": {
+                        "kind": "numeric",
+                        "expected": 30,
+                        "unit": "minutes"
+                  }
+            }
+      ]
+},
       "G3-FORM-A": {
         id: "G3-FORM-A",
         title: "Grade 3 Mathematics — Practice Test Form A",
@@ -635,62 +1097,64 @@
           },
           {
             id: "G3-03", type: "A", points: 1, dok: 2, ccss: "3.OA.D.8", claim: 2,
-            stimulus: "<p>Marcus collected <strong>245</strong> trading cards. He sold <strong>85</strong> cards at a swap meet and then bought <strong>40</strong> new cards.</p>",
-            prompt: "How many trading cards does Marcus have now?",
-            instruction: "Type a whole number.",
-            diagramType: "barModel", diagramData: { start: 245, subtract: 85, add: 40 },
-            rubric: { kind: "numeric", expected: 200, unit: "cards" }
+            stimulus: "<p>Marcus collected <strong>245</strong> plastic bottles in September and <strong>180</strong> plastic bottles in October. He turned in <strong>195</strong> of those bottles to a recycling center.</p>",
+            prompt: "How many plastic bottles does Marcus have remaining?",
+            instruction: "Type a whole number or number with units.",
+            diagramType: "barModel", diagramData: { parts: [245, 180], subtract: 195 },
+            rubric: { kind: "numeric", expected: 230, unit: "bottles" }
           },
           {
-            id: "G3-04", type: "B", points: 1, dok: 1, ccss: "3.OA.A.1", claim: 1,
-            stimulus: "<p>Which expression represents <strong>5 groups of 6</strong>?</p>",
-            prompt: "Select the correct expression.",
+            id: "G3-04", type: "B", points: 1, dok: 1, ccss: "3.NF.A.3d", claim: 1,
+            stimulus: "<p>Compare two fractions with the same denominator: <strong>4/6</strong> and <strong>2/6</strong>.</p>",
+            prompt: "Which comparison statement is correct?",
+            instruction: "Select the single best answer.",
             options: [
-              { id: "A", text: "5 + 6" },
-              { id: "B", text: "5 × 6" },
-              { id: "C", text: "6 - 5" },
-              { id: "D", text: "30 ÷ 5" }
+              { id: "A", text: "4/6 < 2/6 because 4 is smaller than 2." },
+              { id: "B", text: "4/6 = 2/6 because they have the same denominator." },
+              { id: "C", text: "4/6 > 2/6 because 4 parts of 6 is greater than 2 parts of 6." },
+              { id: "D", text: "4/6 > 2/6 because 6 is greater than 4." }
             ],
-            rubric: { kind: "exact", expected: "B" }
+            rubric: { kind: "exact", expected: "C" }
           },
           {
-            id: "G3-05", type: "C", points: 1, dok: 2, ccss: "3.NBT.A.2", claim: 1,
-            stimulus: "<p>Determine if each addition or subtraction equation is True or False.</p>",
-            prompt: "Select True or False for each equation.",
+            id: "G3-05", type: "C", points: 1, dok: 2, ccss: "3.OA.B.5", claim: 1,
+            stimulus: "<p>Determine whether each multiplication equation is True or False.</p>",
+            prompt: "Select True or False for each statement.",
+            instruction: "Select one option per row.",
             rows: [
-              { id: "r1", text: "354 + 218 = 572" },
-              { id: "r2", text: "800 - 435 = 375" },
-              { id: "r3", text: "426 + 189 = 615" }
+              { id: "r1", text: "7 × 4 = 4 × 7" },
+              { id: "r2", text: "0 × 9 = 9" },
+              { id: "r3", text: "(2 × 3) × 4 = 2 × (3 × 4)" }
             ],
-            rubric: { kind: "matching", expected: { r1: "True", r2: "False", r3: "True" } }
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
           },
           {
-            id: "G3-06", type: "E", points: 1, dok: 2, ccss: "3.G.A.1", claim: 1,
-            stimulus: "<p>Select <strong>ALL</strong> shapes that are quadrilaterals.</p>",
-            prompt: "Select all applicable options.",
-            options: [
-              { id: "A", text: "Rectangle" },
-              { id: "B", text: "Triangle" },
-              { id: "C", text: "Square" },
-              { id: "D", text: "Pentagon" },
-              { id: "E", text: "Trapezoid" }
-            ],
-            rubric: { kind: "multiSelect", expected: ["A", "C", "E"] }
-          },
-          {
-            id: "G3-07", type: "A", points: 1, dok: 2, ccss: "3.MD.C.7b", claim: 1,
+            id: "G3-06", type: "A", points: 1, dok: 2, ccss: "3.MD.C.7b", claim: 1,
             stimulus: "<p>A rectangular rug has a length of <strong>9 feet</strong> and a width of <strong>6 feet</strong>.</p>",
-            prompt: "What is the total area of the rug in square feet?",
-            instruction: "Type a whole number.",
+            prompt: "What is the area of the rug in square feet?",
+            instruction: "Type a number.",
             diagramType: "areaRect", diagramData: { length: 9, width: 6 },
             rubric: { kind: "numeric", expected: 54, unit: "sq ft" }
           },
           {
-            id: "G3-08", type: "A", points: 1, dok: 1, ccss: "3.OA.C.7", claim: 1,
-            stimulus: "<p>Solve: <strong>63 ÷ 7 = ?</strong></p>",
-            prompt: "Enter the missing quotient.",
-            instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 9 }
+            id: "G3-07", type: "E", points: 1, dok: 2, ccss: "3.OA.A.1", claim: 1,
+            stimulus: "<p>A store sells apples in bags of <strong>5</strong>. Which expressions equal <strong>30 apples</strong>?</p>",
+            prompt: "Select all matching expressions.",
+            instruction: "Select all that apply.",
+            options: [
+              { id: "A", text: "6 × 5" },
+              { id: "B", text: "5 + 5 + 5 + 5 + 5 + 5" },
+              { id: "C", text: "30 ÷ 5" },
+              { id: "D", text: "5 × 6" }
+            ],
+            rubric: { kind: "multi", expected: ["A", "B", "D"] }
+          },
+          {
+            id: "G3-08", type: "A", points: 1, dok: 2, ccss: "3.MD.D.8", claim: 1,
+            stimulus: "<p>A rectangular garden has a perimeter of <strong>26 feet</strong> and a width of <strong>5 feet</strong>.</p>",
+            prompt: "What is the length of the garden in feet?",
+            instruction: "Type a number.",
+            rubric: { kind: "numeric", expected: 8, unit: "ft" }
           }
         ]
       },
@@ -701,77 +1165,80 @@
         items: [
           {
             id: "G4-01", type: "A", points: 1, dok: 1, ccss: "4.NBT.B.5", claim: 1,
-            stimulus: "<p>A school district purchased <strong>38 boxes</strong> of markers. Each box contains <strong>24 markers</strong>.</p>",
-            prompt: "How many markers did the district purchase in total?",
+            stimulus: "<p>A wholesale club sells cases of juice boxes. Each case contains <strong>24 boxes</strong>. A school purchases <strong>36 cases</strong> for sports day.</p>",
+            prompt: "How many juice boxes did the school purchase in total?",
             instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 912, unit: "markers" }
+            diagramType: "array", diagramData: { rows: 4, cols: 6, label: "24 boxes per case" },
+            rubric: { kind: "numeric", expected: 864, unit: "boxes" }
           },
           {
-            id: "G4-02", type: "D", points: 1, dok: 1, ccss: "4.NF.A.1", claim: 1,
-            stimulus: "<p>The bar below represents 1 whole. Click parts to shade an equivalent fraction for <strong>2/3</strong> using 6ths.</p>",
-            prompt: "Shade the model to show an equivalent fraction.",
+            id: "G4-02", type: "D", points: 1, dok: 2, ccss: "4.NF.B.3a", claim: 1,
+            stimulus: "<p>A tape diagram represents <strong>1 whole unit</strong> split into <strong>10 equal parts</strong>.</p>",
+            prompt: "Click parts on the bar to shade 7/10 of the whole.",
             instruction: "Click sections to shade or unshade.",
-            diagramType: "fractionBarStatic", diagramData: { total: 6, note: "6 equal parts" },
-            rubric: { kind: "shading", totalParts: 6, targetShaded: 4 }
+            diagramType: "fractionBarStatic", diagramData: { total: 10, note: "10 equal parts" },
+            rubric: { kind: "shading", totalParts: 10, targetShaded: 7 }
           },
           {
-            id: "G4-03", type: "B", points: 1, dok: 2, ccss: "4.OA.A.2", claim: 2,
-            stimulus: "<p>A blueberry farm harvested <strong>1,450 pounds</strong> of blueberries in July. In August, they harvested <strong>3 times as many pounds</strong> as in July.</p>",
-            prompt: "How many pounds of blueberries were harvested in August?",
+            id: "G4-03", type: "A", points: 1, dok: 2, ccss: "4.MD.A.3", claim: 2,
+            stimulus: "<p>A rectangular playground has a length of <strong>15 meters</strong> and an area of <strong>120 square meters</strong>.</p>",
+            prompt: "What is the perimeter of the playground in meters?",
+            instruction: "Type a number.",
+            diagramType: "perimeterPair", diagramData: { length: 15, area: 120 },
+            rubric: { kind: "numeric", expected: 46, unit: "m" }
+          },
+          {
+            id: "G4-04", type: "B", points: 1, dok: 1, ccss: "4.NF.A.2", claim: 1,
+            stimulus: "<p>Consider the fractions <strong>3/4</strong> and <strong>5/8</strong>.</p>",
+            prompt: "Which comparison statement is true?",
+            instruction: "Select the single best answer.",
             options: [
-              { id: "A", text: "4,350 pounds" },
-              { id: "B", text: "4,250 pounds" },
-              { id: "C", text: "1,453 pounds" },
-              { id: "D", text: "5,800 pounds" }
+              { id: "A", text: "3/4 < 5/8 because 3 is less than 5." },
+              { id: "B", text: "3/4 = 5/8 because both are less than 1." },
+              { id: "C", text: "3/4 > 5/8 because 3/4 equals 6/8, and 6/8 is greater than 5/8." },
+              { id: "D", text: "3/4 > 5/8 because 4 is less than 8." }
             ],
-            rubric: { kind: "exact", expected: "A" }
+            rubric: { kind: "exact", expected: "C" }
           },
           {
-            id: "G4-04", type: "C", points: 1, dok: 2, ccss: "4.NF.A.2", claim: 1,
-            stimulus: "<p>Compare each pair of fractions. Determine if the inequality is True or False.</p>",
-            prompt: "Select True or False for each comparison.",
+            id: "G4-05", type: "C", points: 1, dok: 2, ccss: "4.G.A.2", claim: 1,
+            stimulus: "<p>Classify geometric shapes based on parallel and perpendicular lines.</p>",
+            prompt: "Select True or False for each statement.",
+            instruction: "Select one option per row.",
             rows: [
-              { id: "r1", text: "3/4 > 5/8" },
-              { id: "r2", text: "2/5 = 4/10" },
-              { id: "r3", text: "1/3 < 2/9" }
+              { id: "r1", text: "A rectangle has 2 pairs of parallel sides and 4 right angles." },
+              { id: "r2", text: "A right triangle can have 2 obtuse angles." },
+              { id: "r3", text: "A square has perpendicular adjacent side segments." }
             ],
-            rubric: { kind: "matching", expected: { r1: "True", r2: "True", r3: "False" } }
-          },
-          {
-            id: "G4-05", type: "A", points: 1, dok: 2, ccss: "4.MD.A.3", claim: 1,
-            stimulus: "<p>A rectangular playground has a perimeter of <strong>36 meters</strong>. The width of the playground is <strong>8 meters</strong>.</p>",
-            prompt: "What is the length of the playground in meters?",
-            instruction: "Type a whole number.",
-            diagramType: "perimeterPair", diagramData: { width: 8, perimeter: 36 },
-            rubric: { kind: "numeric", expected: 10, unit: "meters" }
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
           },
           {
             id: "G4-06", type: "A", points: 1, dok: 2, ccss: "4.MD.C.6", claim: 1,
-            stimulus: "<p>Angle DCE forms a straight angle measuring <strong>180°</strong>. Ray CF splits the angle such that <strong>∠DCF = 115°</strong>.</p>",
+            stimulus: "<p>A straight angle <strong>DCE</strong> measures <strong>180°</strong>. Ray <strong>CF</strong> splits the angle into <strong>∠DCF</strong> and <strong>∠FCE</strong>. If <strong>∠DCF = 65°</strong>, calculate the measure of <strong>∠FCE</strong>.</p>",
             prompt: "What is the measure of ∠FCE in degrees?",
-            instruction: "Type a whole number.",
-            diagramType: "angleDiagram", diagramData: { total: 180, known: 115, unknown: "∠FCE" },
-            rubric: { kind: "numeric", expected: 65, unit: "degrees" }
+            instruction: "Type a number.",
+            diagramType: "angleDiagram", diagramData: { dcf: 65 },
+            rubric: { kind: "numeric", expected: 115, unit: "deg" }
           },
           {
-            id: "G4-07", type: "E", points: 1, dok: 1, ccss: "4.OA.B.4", claim: 1,
-            stimulus: "<p>Select <strong>ALL</strong> numbers that are prime numbers.</p>",
-            prompt: "Select all prime numbers from the list.",
+            id: "G4-07", type: "E", points: 1, dok: 2, ccss: "4.OA.A.3", claim: 2,
+            stimulus: "<p>A baker has <strong>150 cookies</strong>. She packs them into boxes of <strong>8 cookies</strong> each.</p>",
+            prompt: "Which statements are correct?",
+            instruction: "Select all that apply.",
             options: [
-              { id: "A", text: "17" },
-              { id: "B", text: "21" },
-              { id: "C", text: "29" },
-              { id: "D", text: "33" },
-              { id: "E", text: "41" }
+              { id: "A", text: "She can fill 18 full boxes." },
+              { id: "B", text: "There will be 6 cookies left over." },
+              { id: "C", text: "She needs 19 boxes to hold all 150 cookies." },
+              { id: "D", text: "150 ÷ 8 = 18 with a remainder of 6." }
             ],
-            rubric: { kind: "multiSelect", expected: ["A", "C", "E"] }
+            rubric: { kind: "multi", expected: ["A", "B", "C", "D"] }
           },
           {
-            id: "G4-08", type: "A", points: 1, dok: 1, ccss: "4.NBT.B.4", claim: 1,
-            stimulus: "<p>Subtract: <strong>50,000 - 27,485</strong></p>",
-            prompt: "Enter the exact difference.",
+            id: "G4-08", type: "A", points: 1, dok: 2, ccss: "4.NBT.B.6", claim: 1,
+            stimulus: "<p>A school district distributes <strong>1,452 laptops</strong> equally among <strong>6 elementary schools</strong>.</p>",
+            prompt: "How many laptops does each school receive?",
             instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 22515 }
+            rubric: { kind: "numeric", expected: 242, unit: "laptops" }
           }
         ]
       },
@@ -782,74 +1249,78 @@
         items: [
           {
             id: "G5-01", type: "A", points: 1, dok: 1, ccss: "5.NBT.B.5", claim: 1,
-            stimulus: "<p>Calculate the product: <strong>432 × 26</strong></p>",
+            stimulus: "<p>Calculate the product of <strong>348 × 26</strong>.</p>",
             prompt: "What is the product?",
             instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 11232 }
+            rubric: { kind: "numeric", expected: 9048 }
           },
           {
-            id: "G5-02", type: "A", points: 1, dok: 2, ccss: "5.NF.A.1", claim: 1,
-            stimulus: "<p>Evaluate the expression: <strong>2/3 + 3/4</strong></p>",
-            prompt: "Enter the sum as an improper fraction or mixed number.",
-            instruction: "Type as fraction (e.g. 17/12).",
-            rubric: { kind: "exact", expected: "17/12" }
-          },
-          {
-            id: "G5-03", type: "A", points: 1, dok: 2, ccss: "5.MD.C.5b", claim: 1,
-            stimulus: "<p>A rectangular prism has a length of <strong>8 cm</strong>, a width of <strong>5 cm</strong>, and a height of <strong>6 cm</strong>.</p>",
-            prompt: "What is the volume of the rectangular prism in cubic centimeters?",
-            instruction: "Type a whole number.",
-            diagramType: "prismDiagram", diagramData: { l: 8, w: 5, h: 6 },
-            rubric: { kind: "numeric", expected: 240, unit: "cm³" }
-          },
-          {
-            id: "G5-04", type: "B", points: 1, dok: 1, ccss: "5.NBT.A.2", claim: 1,
-            stimulus: "<p>Which expression is equivalent to <strong>3.45 × 10³</strong>?</p>",
-            prompt: "Select the correct value.",
-            options: [
-              { id: "A", text: "34.5" },
-              { id: "B", text: "345" },
-              { id: "C", text: "3,450" },
-              { id: "D", text: "34,500" }
-            ],
-            rubric: { kind: "exact", expected: "C" }
-          },
-          {
-            id: "G5-05", type: "C", points: 1, dok: 2, ccss: "5.OA.A.2", claim: 1,
-            stimulus: "<p>Determine if each numerical statement correctly matches the numerical expression.</p>",
-            prompt: "Select True or False for each statement.",
-            rows: [
-              { id: "r1", text: "'Add 8 and 7, then multiply by 2' → 2 × (8 + 7)" },
-              { id: "r2", text: "'Triple the difference of 15 and 9' → 3 × 15 - 9" },
-              { id: "r3", text: "'Half the sum of 20 and 12' → (20 + 12) ÷ 2" }
-            ],
-            rubric: { kind: "matching", expected: { r1: "True", r2: "False", r3: "True" } }
-          },
-          {
-            id: "G5-06", type: "E", points: 1, dok: 1, ccss: "5.G.B.3", claim: 1,
-            stimulus: "<p>Select <strong>ALL</strong> categories that describe a square.</p>",
-            prompt: "Select all categories that apply.",
-            options: [
-              { id: "A", text: "Parallelogram" },
-              { id: "B", text: "Rectangle" },
-              { id: "C", text: "Rhombus" },
-              { id: "D", text: "Trapezoid (only 1 pair parallel)" }
-            ],
-            rubric: { kind: "multiSelect", expected: ["A", "B", "C"] }
-          },
-          {
-            id: "G5-07", type: "A", points: 1, dok: 2, ccss: "5.NF.B.4a", claim: 1,
-            stimulus: "<p>A recipe requires <strong>3/5 cup</strong> of sugar. Maya wants to make <strong>1/2</strong> of the recipe.</p>",
-            prompt: "How much sugar does Maya need in cups?",
-            instruction: "Enter fraction as a/b.",
-            rubric: { kind: "exact", expected: "3/10" }
-          },
-          {
-            id: "G5-08", type: "A", points: 1, dok: 1, ccss: "5.NBT.B.7", claim: 1,
-            stimulus: "<p>Solve: <strong>12.6 ÷ 0.3 = ?</strong></p>",
-            prompt: "Type the quotient.",
+            id: "G5-02", type: "A", points: 1, dok: 2, ccss: "5.MD.C.5b", claim: 1,
+            stimulus: "<p>A rectangular prism storage container has a length of <strong>12 cm</strong>, width of <strong>8 cm</strong>, and height of <strong>5 cm</strong>.</p>",
+            prompt: "What is the volume of the container in cubic centimeters?",
             instruction: "Type a number.",
-            rubric: { kind: "numeric", expected: 42 }
+            diagramType: "prismDiagram", diagramData: { l: 12, w: 8, h: 5 },
+            rubric: { kind: "numeric", expected: 480, unit: "cu cm" }
+          },
+          {
+            id: "G5-03", type: "B", points: 1, dok: 2, ccss: "5.NF.A.1", claim: 1,
+            stimulus: "<p>Evaluate the sum of <strong>2/3 + 1/4</strong>.</p>",
+            prompt: "Which fraction represents the exact sum?",
+            instruction: "Select the single best answer.",
+            options: [
+              { id: "A", text: "3/7" },
+              { id: "B", text: "11/12" },
+              { id: "C", text: "3/12" },
+              { id: "D", text: "8/12" }
+            ],
+            rubric: { kind: "exact", expected: "B" }
+          },
+          {
+            id: "G5-04", type: "C", points: 1, dok: 2, ccss: "5.NBT.A.2", claim: 1,
+            stimulus: "<p>Multiplying or dividing by powers of 10 shifts decimal places.</p>",
+            prompt: "Select True or False for each statement.",
+            instruction: "Select one option per row.",
+            rows: [
+              { id: "r1", text: "4.5 × 10^2 = 450" },
+              { id: "r2", text: "67.3 ÷ 10^1 = 6.73" },
+              { id: "r3", text: "0.89 × 10^3 = 89" }
+            ],
+            rubric: { kind: "grid", expected: { r1: "True", r2: "True", r3: "False" } }
+          },
+          {
+            id: "G5-05", type: "A", points: 1, dok: 2, ccss: "5.NF.B.4a", claim: 1,
+            stimulus: "<p>A recipe requires <strong>3/4 cup</strong> of sugar. Chef Leo makes <strong>2/3</strong> of the recipe.</p>",
+            prompt: "How many cups of sugar does Chef Leo use?",
+            instruction: "Type a fraction or simplified fraction.",
+            rubric: { kind: "numeric", expected: 0.5, unit: "cup" }
+          },
+          {
+            id: "G5-06", type: "E", points: 1, dok: 2, ccss: "5.G.B.3", claim: 1,
+            stimulus: "<p>Properties of two-dimensional quadrilaterals.</p>",
+            prompt: "Select all true statements.",
+            instruction: "Select all that apply.",
+            options: [
+              { id: "A", text: "All squares are rectangles." },
+              { id: "B", text: "All parallelograms are trapezoids." },
+              { id: "C", text: "All rhombuses have 4 equal sides." },
+              { id: "D", text: "All rectangles are squares." }
+            ],
+            rubric: { kind: "multi", expected: ["A", "C"] }
+          },
+          {
+            id: "G5-07", type: "D", points: 1, dok: 2, ccss: "5.NF.B.6", claim: 2,
+            stimulus: "<p>A park model shows <strong>12 equal sections</strong>. <strong>5/12</strong> is designated for sports fields.</p>",
+            prompt: "Click sections on the bar model to shade 5/12.",
+            instruction: "Click sections to shade or unshade.",
+            diagramType: "fractionBarStatic", diagramData: { total: 12, note: "12 equal sections" },
+            rubric: { kind: "shading", totalParts: 12, targetShaded: 5 }
+          },
+          {
+            id: "G5-08", type: "A", points: 1, dok: 2, ccss: "5.OA.A.2", claim: 1,
+            stimulus: "<p>Evaluate the numerical expression: <strong>[3 + (4 × 5)] × 2</strong>.</p>",
+            prompt: "What is the value of the expression?",
+            instruction: "Type a whole number.",
+            rubric: { kind: "numeric", expected: 46 }
           }
         ]
       },
@@ -859,79 +1330,156 @@
         grade: 6,
         items: [
           {
-            id: "G6-01", type: "A", points: 1, dok: 1, ccss: "6.RP.A.3c", claim: 1,
-            stimulus: "<p>A student answered <strong>85%</strong> of the <strong>60 questions</strong> correctly on a science benchmark test.</p>",
-            prompt: "How many questions did the student answer correctly?",
-            instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 51, unit: "questions" }
+            id: "G6-01", type: "A", points: 1, dok: 1, ccss: "6.RP.A.3a", claim: 1,
+            stimulus: "<p>A car travels <strong>180 miles</strong> in <strong>3 hours</strong> at a constant speed.</p>",
+            prompt: "What is the car's unit speed in miles per hour?",
+            instruction: "Type a number.",
+            rubric: { kind: "numeric", expected: 60, unit: "mph" }
           },
           {
-            id: "G6-02", type: "B", points: 1, dok: 2, ccss: "6.EE.A.2c", claim: 1,
-            stimulus: "<p>Evaluate the algebraic expression <strong>3x² - 4x + 7</strong> when <strong>x = 5</strong>.</p>",
+            id: "G6-02", type: "A", points: 1, dok: 2, ccss: "6.EE.B.7", claim: 1,
+            stimulus: "<p>Solve the algebraic equation: <strong>4x + 12 = 48</strong>.</p>",
+            prompt: "What is the value of x?",
+            instruction: "Type a number.",
+            rubric: { kind: "numeric", expected: 9 }
+          },
+          {
+            id: "G6-03", type: "B", points: 1, dok: 2, ccss: "6.RP.A.3c", claim: 1,
+            stimulus: "<p>What is <strong>35%</strong> of <strong>240</strong>?</p>",
             prompt: "Select the correct value.",
+            instruction: "Select the single best answer.",
             options: [
-              { id: "A", text: "52" },
-              { id: "B", text: "62" },
-              { id: "C", text: "42" },
-              { id: "D", text: "72" }
+              { id: "A", text: "70" },
+              { id: "B", text: "84" },
+              { id: "C", text: "96" },
+              { id: "D", text: "105" }
             ],
             rubric: { kind: "exact", expected: "B" }
           },
           {
-            id: "G6-03", type: "A", points: 1, dok: 2, ccss: "6.EE.B.7", claim: 2,
-            stimulus: "<p>Solve the equation for y: <strong>4.5y = 31.5</strong></p>",
-            prompt: "What is the value of y?",
-            instruction: "Type a number.",
-            rubric: { kind: "numeric", expected: 7 }
-          },
-          {
             id: "G6-04", type: "C", points: 1, dok: 2, ccss: "6.NS.C.7", claim: 1,
-            stimulus: "<p>Determine if each absolute value or inequality comparison is True or False.</p>",
-            prompt: "Select True or False for each comparison.",
+            stimulus: "<p>Evaluate absolute values and inequalities involving negative numbers.</p>",
+            prompt: "Select True or False for each statement.",
+            instruction: "Select one option per row.",
             rows: [
               { id: "r1", text: "|-15| = 15" },
               { id: "r2", text: "-8 > -3" },
-              { id: "r3", text: "|-7| < |4|" }
+              { id: "r3", text: "|-4| < |-7|" }
             ],
-            rubric: { kind: "matching", expected: { r1: "True", r2: "False", r3: "False" } }
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
           },
           {
             id: "G6-05", type: "A", points: 1, dok: 2, ccss: "6.G.A.1", claim: 1,
-            stimulus: "<p>A right triangle has a base of <strong>14 inches</strong> and a height of <strong>9 inches</strong>.</p>",
+            stimulus: "<p>A triangle has a base of <strong>14 inches</strong> and a height of <strong>8 inches</strong>.</p>",
             prompt: "What is the area of the triangle in square inches?",
-            instruction: "Type a whole number.",
-            diagramType: "areaRect", diagramData: { length: 14, width: 9 },
-            rubric: { kind: "numeric", expected: 63, unit: "sq in" }
-          },
-          {
-            id: "G6-06", type: "E", points: 1, dok: 1, ccss: "6.RP.A.1", claim: 1,
-            stimulus: "<p>A fruit basket contains <strong>6 apples</strong>, <strong>8 bananas</strong>, and <strong>4 oranges</strong>. Select <strong>ALL</strong> statements that describe a correct ratio.</p>",
-            prompt: "Select all correct ratio statements.",
-            options: [
-              { id: "A", text: "Ratio of apples to bananas is 3:4" },
-              { id: "B", text: "Ratio of oranges to total fruit is 2:9" },
-              { id: "C", text: "Ratio of bananas to apples is 4:3" },
-              { id: "D", text: "Ratio of oranges to apples is 1:2" }
-            ],
-            rubric: { kind: "multiSelect", expected: ["A", "B", "C"] }
-          },
-          {
-            id: "G6-07", type: "A", points: 1, dok: 2, ccss: "6.SP.B.5c", claim: 1,
-            stimulus: "<p>The test scores for 5 students are: <strong>82, 90, 75, 88, and 95</strong>.</p>",
-            prompt: "What is the mean (average) test score?",
             instruction: "Type a number.",
-            rubric: { kind: "numeric", expected: 86 }
+            rubric: { kind: "numeric", expected: 56, unit: "sq in" }
           },
           {
-            id: "G6-08", type: "A", points: 1, dok: 1, ccss: "6.NS.A.1", claim: 1,
-            stimulus: "<p>Divide: <strong>(3/4) ÷ (1/8) = ?</strong></p>",
-            prompt: "What is the quotient?",
+            id: "G6-06", type: "E", points: 1, dok: 2, ccss: "6.EE.A.3", claim: 1,
+            stimulus: "<p>Which expressions are equivalent to <strong>3(2x + 4)</strong>?</p>",
+            prompt: "Select all equivalent expressions.",
+            instruction: "Select all that apply.",
+            options: [
+              { id: "A", text: "6x + 12" },
+              { id: "B", text: "6x + 4" },
+              { id: "C", text: "2x + 2x + 2x + 12" },
+              { id: "D", text: "6(x + 2)" }
+            ],
+            rubric: { kind: "multi", expected: ["A", "C", "D"] }
+          },
+          {
+            id: "G6-07", type: "D", points: 1, dok: 2, ccss: "6.RP.A.1", claim: 1,
+            stimulus: "<p>A ratio bar displays <strong>10 parts</strong> total. <strong>4 parts</strong> are shaded blue.</p>",
+            prompt: "Click parts on the bar to model 4/10.",
+            instruction: "Click sections to shade or unshade.",
+            diagramType: "fractionBarStatic", diagramData: { total: 10, note: "10 ratio parts" },
+            rubric: { kind: "shading", totalParts: 10, targetShaded: 4 }
+          },
+          {
+            id: "G6-08", type: "A", points: 1, dok: 2, ccss: "6.SP.B.5c", claim: 1,
+            stimulus: "<p>Find the mean of the dataset: <strong>12, 18, 24, 30, 36</strong>.</p>",
+            prompt: "What is the mean value?",
             instruction: "Type a whole number.",
-            rubric: { kind: "numeric", expected: 6 }
+            rubric: { kind: "numeric", expected: 24 }
           }
         ]
       }
     };
+
+    
+    /* UTF-8 Safe Base64 URL Test Data Encoder/Decoder */
+    function encodeFormToJsonData(formObj) {
+      try {
+        const jsonStr = JSON.stringify(formObj);
+        return btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+          return String.fromCharCode('0x' + p1);
+        }));
+      } catch(e) {
+        console.error("Encoding error", e);
+        return "";
+      }
+    }
+
+    function decodeJsonDataToForm(b64Str) {
+      try {
+        const jsonStr = decodeURIComponent(Array.prototype.map.call(atob(b64Str), function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonStr);
+      } catch(e) {
+        console.error("Decoding error", e);
+        return null;
+      }
+    }
+
+    function saveCustomFormToStorage(formObj) {
+      try {
+        let stored = localStorage.getItem("sbac_custom_forms");
+        let parsedDict = stored ? JSON.parse(stored) : {};
+        parsedDict[formObj.id] = formObj;
+        localStorage.setItem("sbac_custom_forms", JSON.stringify(parsedDict));
+      } catch(e) {
+        console.error("Storage error", e);
+      }
+    }
+
+    function loadCustomFormsFromStorage() {
+      try {
+        let stored = localStorage.getItem("sbac_custom_forms");
+        if (stored) {
+          let parsedDict = JSON.parse(stored);
+          Object.keys(parsedDict).forEach(id => {
+            const form = parsedDict[id];
+            FORMS[id] = form;
+            updateFormDropdowns(id, form.title || id);
+          });
+        }
+      } catch(e) {
+        console.error("Storage load error", e);
+      }
+    }
+
+    function downloadStandaloneAppHtml() {
+      const currentForm = FORMS[activeFormId];
+      if (!currentForm) return;
+
+      let docHtml = document.documentElement.outerHTML;
+      const formsJsString = "const FORMS = " + JSON.stringify(FORMS, null, 2) + ";";
+      
+      docHtml = docHtml.replace(/\/\* Built-in SBAC Test Forms \*\/[\s\S]*?\/\* App State Variables \*\//, 
+        "/* Built-in SBAC Test Forms */\n    " + formsJsString + "\n\n    /* App State Variables */");
+
+      const blob = new Blob([docHtml], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `sbac_practice_test_${currentForm.id.toLowerCase()}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
 
     /* App State Variables */
     let activeFormId = "G4-FORM-A";
@@ -947,13 +1495,15 @@
     let timerSeconds = 0;
     let timerInterval = null;
 
-    /* Draggable Scratchpad Variables */
+    /* Floating Scratchpad Variables */
     let isScratchActive = false;
     let scratchTool = "pen";
     let isDrawing = false;
 
     /* Page Initialization */
     window.addEventListener("DOMContentLoaded", function() {
+      loadCustomFormsFromStorage();
+
       const urlParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
       
@@ -961,27 +1511,40 @@
         isStudentMode = true;
       }
       
-      const testParam = urlParams.get("test") || hashParams.get("test");
-      if (testParam && FORMS[testParam]) {
-        activeFormId = testParam;
+      const testDataParam = hashParams.get("testData") || urlParams.get("testData");
+      if (testDataParam) {
+        const decodedForm = decodeJsonDataToForm(testDataParam);
+        if (decodedForm && decodedForm.id && Array.isArray(decodedForm.items)) {
+          FORMS[decodedForm.id] = decodedForm;
+          activeFormId = decodedForm.id;
+          updateFormDropdowns(decodedForm.id, decodedForm.title || decodedForm.id);
+          saveCustomFormToStorage(decodedForm);
+        }
+      } else {
+        const testParam = urlParams.get("test") || hashParams.get("test");
+        if (testParam && FORMS[testParam]) {
+          activeFormId = testParam;
+        }
       }
 
       if (isStudentMode) {
-        document.getElementById("admin-view-toggle-group").style.display = "none";
+        const adminToggleGroup = document.getElementById("admin-view-toggle-group");
+        if (adminToggleGroup) adminToggleGroup.style.display = "none";
+
         document.getElementById("student-preview-banner").style.display = "none";
+        document.getElementById("sbac-toolbar-strip").style.display = "flex";
+        document.getElementById("timer-badge-box").style.display = "flex";
         document.getElementById("student-entry-modal").classList.add("open");
         showView("student");
+        startTimer();
       } else {
         // Teacher mode default landing is Teacher Admin Setup
-        document.getElementById("admin-view-toggle-group").style.display = "flex";
         document.getElementById("student-preview-banner").style.display = "none";
+        document.getElementById("sbac-toolbar-strip").style.display = "none";
+        document.getElementById("timer-badge-box").style.display = "none";
         showView("admin");
-        refreshAdminShareLinks();
+        loadFormById(activeFormId);
       }
-
-      // Initialize form options in Editor
-      loadFormIntoEditor(activeFormId);
-      makeScratchpadDraggable();
 
       if (window.lucide) window.lucide.createIcons();
     });
@@ -999,26 +1562,6 @@
     function showView(viewId) {
       document.querySelectorAll(".view-container").forEach(el => el.classList.remove("active"));
       document.getElementById("view-" + viewId).classList.add("active");
-
-      const studentTab = document.getElementById("tab-btn-student");
-      const adminTab = document.getElementById("tab-btn-admin");
-      if (studentTab) {
-        studentTab.classList.toggle("btn-header-light", viewId === "student");
-        studentTab.classList.toggle("btn-header-ghost", viewId !== "student");
-      }
-      if (adminTab) {
-        adminTab.classList.toggle("btn-header-light", viewId === "admin");
-        adminTab.classList.toggle("btn-header-ghost", viewId !== "admin");
-      }
-
-      if (viewId === "student") {
-        document.getElementById("sbac-toolbar-strip").style.display = "flex";
-        document.getElementById("timer-badge-box").style.display = "flex";
-        startTimer();
-      } else {
-        document.getElementById("sbac-toolbar-strip").style.display = "none";
-        document.getElementById("timer-badge-box").style.display = "none";
-      }
     }
 
     function showAdminSubtab(subId, btnEl) {
@@ -1029,26 +1572,24 @@
         const el = document.getElementById("admin-subtab-" + id);
         if (el) el.style.display = (id === subId) ? "flex" : "none";
       });
-
-      if (subId === "importer") {
-        loadFormIntoEditor(activeFormId);
-      }
     }
 
     function loadFormById(formId) {
       if (FORMS[formId]) {
         activeFormId = formId;
-        refreshAdminShareLinks();
-      }
-    }
+        
+        // Sync both dropdown selectors
+        const sel1 = document.getElementById("admin-form-selector");
+        if (sel1) sel1.value = formId;
+        const sel2 = document.getElementById("admin-form-selector-editor");
+        if (sel2) sel2.value = formId;
 
-    function loadFormIntoEditor(formId) {
-      if (FORMS[formId]) {
-        activeFormId = formId;
-        const selector = document.getElementById("editor-form-selector");
-        if (selector) selector.value = formId;
+        // Auto-populate JSON editor with formatted JSON
         const textarea = document.getElementById("json-import-textarea");
-        if (textarea) textarea.value = JSON.stringify(FORMS[formId], null, 2);
+        if (textarea) {
+          textarea.value = JSON.stringify(FORMS[formId], null, 2);
+        }
+
         refreshAdminShareLinks();
       }
     }
@@ -1057,7 +1598,16 @@
       let base = window.location.href.split("#")[0].split("?")[0];
       base = base.replace(/^blob:/i, "");
       
-      const studentUrl = `${base}?mode=student&test=${activeFormId}`;
+      const currentForm = FORMS[activeFormId];
+      let studentUrl = "";
+      
+      if (currentForm) {
+        const dataStr = encodeFormToJsonData(currentForm);
+        studentUrl = `${base}?mode=student&test=${encodeURIComponent(activeFormId)}#testData=${dataStr}`;
+      } else {
+        studentUrl = `${base}?mode=student&test=${encodeURIComponent(activeFormId)}`;
+      }
+      
       document.getElementById("shareable-student-link").value = studentUrl;
 
       // Render Simple Inline SVG QR
@@ -1087,24 +1637,33 @@
     function copyStudentLink() {
       const inp = document.getElementById("shareable-student-link");
       inp.select();
-      navigator.clipboard.writeText(inp.value).then(() => {
-        alert("Student Test Link copied to clipboard!");
-      });
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(inp.value).then(() => {
+          alert("Student Test Link copied to clipboard!");
+        });
+      } else {
+        alert("Link selected! Press Ctrl+C or Cmd+C to copy.");
+      }
     }
 
     function startStudentPreview() {
       isStudentPreviewMode = true;
       document.getElementById("student-preview-banner").style.display = "flex";
+      document.getElementById("sbac-toolbar-strip").style.display = "flex";
+      document.getElementById("timer-badge-box").style.display = "flex";
       studentName = "Teacher Preview";
       enrolledGrade = FORMS[activeFormId].grade;
       activeItemIdx = 0;
       showView("student");
       renderForm();
+      startTimer();
     }
 
     function exitStudentPreview() {
       isStudentPreviewMode = false;
       document.getElementById("student-preview-banner").style.display = "none";
+      document.getElementById("sbac-toolbar-strip").style.display = "none";
+      document.getElementById("timer-badge-box").style.display = "none";
       showView("admin");
     }
 
@@ -1121,7 +1680,6 @@
 
       document.getElementById("student-entry-modal").classList.remove("open");
       activeItemIdx = 0;
-      showView("student");
       renderForm();
     }
 
@@ -1198,7 +1756,7 @@
       const respEl = document.getElementById("item-response-area");
       respEl.innerHTML = renderResponseControls(item);
 
-      // Render Bottom Action Buttons (Previous, Next, Review Answers)
+      // Render Bottom Action Navigation
       const isFirst = activeItemIdx === 0;
       const isLast = activeItemIdx === form.items.length - 1;
       const actionsEl = document.getElementById("item-nav-actions");
@@ -1213,7 +1771,7 @@
             <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
           </button>
           <button type="button" class="btn" onclick="openReviewModal()" style="background:var(--tertiary,#198038);color:#ffffff;border:none;display:inline-flex;align-items:center;gap:4px;font-weight:600;">
-            <i data-lucide="check-square" style="width:16px;height:16px;"></i>
+            <i data-lucide="list-checks" style="width:16px;height:16px;"></i>
             <span>Review Answers</span>
           </button>
         `;
@@ -1244,52 +1802,45 @@
       if (type === "barModel") {
         return `<div class="diagram-box"><svg viewBox="0 0 360 100" width="100%" style="max-width:360px;">
           <rect x="10" y="14" width="200" height="32" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="1.5"/>
-          <text x="110" y="35" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">Start: ${data.start}</text>
-          <rect x="210" y="14" width="140" height="32" fill="#fff1f1" stroke="var(--error)" stroke-width="1.5"/>
-          <text x="280" y="35" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--error)">Sold: -${data.subtract}</text>
-          <rect x="10" y="56" width="160" height="32" fill="#e8f5e9" stroke="var(--success)" stroke-width="1.5"/>
-          <text x="90" y="77" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">Bought: +${data.add}</text>
-        </svg></div>`;
-      }
-      if (type === "areaRect") {
-        return `<div class="diagram-box"><svg viewBox="0 0 320 180" width="100%" style="max-width:320px;">
-          <rect x="40" y="20" width="240" height="130" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2" rx="4"/>
-          <text x="160" y="15" text-anchor="middle" font-weight="600" font-size="13">${data.length} units</text>
-          <text x="25" y="90" text-anchor="middle" font-weight="600" font-size="13">${data.width} units</text>
-          <text x="160" y="90" text-anchor="middle" font-weight="700" font-size="14" fill="var(--primary)">Area = ?</text>
+          <text x="110" y="35" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">Sep: ${data.parts[0]}</text>
+          <rect x="210" y="14" width="140" height="32" fill="#e0e0e0" stroke="var(--on-surface)" stroke-width="1.5"/>
+          <text x="280" y="35" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">Oct: ${data.parts[1]}</text>
+          <rect x="10" y="56" width="120" height="32" fill="#fff1f1" stroke="var(--error)" stroke-width="1.5"/>
+          <text x="70" y="77" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="var(--error)">Used: -${data.subtract}</text>
+          <rect x="130" y="56" width="220" height="32" fill="#ffffff" stroke="var(--on-surface)" stroke-dasharray="4 3" stroke-width="1.5"/>
+          <text x="240" y="77" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">Remaining: ?</text>
         </svg></div>`;
       }
       if (type === "perimeterPair") {
-        return `<div class="diagram-box"><svg viewBox="0 0 320 180" width="100%" style="max-width:320px;">
-          <rect x="40" y="25" width="240" height="120" fill="#fafafa" stroke="var(--on-surface)" stroke-width="2" rx="4"/>
-          <text x="160" y="18" text-anchor="middle" font-weight="600" font-size="13">Length = ?</text>
-          <text x="22" y="90" text-anchor="middle" font-weight="600" font-size="13">${data.width} m</text>
-          <text x="160" y="90" text-anchor="middle" font-weight="700" font-size="13" fill="var(--on-surface-variant)">Perimeter = ${data.perimeter} m</text>
+        return `<div class="diagram-box"><svg viewBox="0 0 280 120" width="100%" style="max-width:280px;">
+          <rect x="20" y="15" width="240" height="90" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2"/>
+          <text x="140" y="10" text-anchor="middle" font-weight="600" font-size="12">Length = 15 m</text>
+          <text x="140" y="65" text-anchor="middle" font-weight="700" font-size="14" fill="var(--primary)">Area = 120 sq m</text>
         </svg></div>`;
       }
       if (type === "angleDiagram") {
-        return `<div class="diagram-box"><svg viewBox="0 0 340 160" width="100%" style="max-width:340px;">
-          <line x1="20" y1="120" x2="320" y2="120" stroke="var(--on-surface)" stroke-width="2.5"/>
-          <line x1="170" y1="120" x2="270" y2="30" stroke="var(--primary)" stroke-width="2.5"/>
-          <circle cx="170" cy="120" r="4" fill="var(--on-surface)"/>
-          <text x="20" y="142" font-weight="700" font-size="12">D</text>
-          <text x="168" y="142" font-weight="700" font-size="12">C</text>
-          <text x="315" y="142" font-weight="700" font-size="12">E</text>
-          <text x="278" y="28" font-weight="700" font-size="12" fill="var(--primary)">F</text>
-          <path d="M 120 120 A 50 50 0 0 1 210 84" fill="none" stroke="var(--error)" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text x="110" y="95" font-weight="600" font-size="12" fill="var(--error)">115°</text>
-          <text x="220" y="105" font-weight="700" font-size="12" fill="var(--primary)">∠FCE = ?</text>
+        return `<div class="diagram-box"><svg viewBox="0 0 320 120" width="100%" style="max-width:320px;">
+          <line x1="20" y1="100" x2="300" y2="100" stroke="#161616" stroke-width="2.5"/>
+          <line x1="160" y1="100" x2="240" y2="20" stroke="#0f62fe" stroke-width="2.5"/>
+          <circle cx="160" cy="100" r="4" fill="#161616"/>
+          <text x="15" y="115" font-weight="700">D</text>
+          <text x="160" y="118" font-weight="700">C</text>
+          <text x="300" y="115" font-weight="700">E</text>
+          <text x="245" y="18" font-weight="700" fill="#0f62fe">F</text>
+          <path d="M 200 100 A 40 40 0 0 0 178 77" fill="none" stroke="#da1e28" stroke-width="2"/>
+          <text x="208" y="85" font-size="11" font-weight="700" fill="#da1e28">65°</text>
+          <path d="M 178 77 A 40 40 0 0 0 120 100" fill="none" stroke="#0f62fe" stroke-width="2" stroke-dasharray="3 2"/>
+          <text x="135" y="75" font-size="11" font-weight="700" fill="#0f62fe">∠FCE = ?</text>
         </svg></div>`;
       }
       if (type === "prismDiagram") {
-        return `<div class="diagram-box"><svg viewBox="0 0 320 180" width="100%" style="max-width:320px;">
-          <path d="M 30 130 L 190 130 L 270 70 L 110 70 Z" fill="#edf5ff" stroke="#0f62fe" stroke-width="2"/>
-          <path d="M 30 130 L 30 50 L 190 50 L 190 130 Z" fill="rgba(15, 98, 254, 0.1)" stroke="#0f62fe" stroke-width="2"/>
-          <path d="M 190 50 L 270 10 L 270 70" fill="none" stroke="#0f62fe" stroke-width="2"/>
-          <path d="M 30 50 L 110 10 L 270 10" fill="none" stroke="#0f62fe" stroke-width="2"/>
-          <text x="110" y="150" font-weight="600" font-size="12">l = ${data.l} cm</text>
-          <text x="240" y="110" font-weight="600" font-size="12">w = ${data.w} cm</text>
-          <text x="15" y="90" font-weight="600" font-size="12">h = ${data.h} cm</text>
+        return `<div class="diagram-box"><svg viewBox="0 0 260 140" width="100%" style="max-width:260px;">
+          <path d="M 20 50 L 180 50 L 240 10 L 80 10 Z" fill="#e8f0fe" stroke="#0f62fe" stroke-width="1.5"/>
+          <path d="M 20 50 L 180 50 L 180 120 L 20 120 Z" fill="#edf5ff" stroke="#0f62fe" stroke-width="1.5"/>
+          <path d="M 180 50 L 240 10 L 240 80 L 180 120 Z" fill="#d0e2ff" stroke="#0f62fe" stroke-width="1.5"/>
+          <text x="100" y="135" font-weight="600" font-size="12">Length = 12 cm</text>
+          <text x="215" y="105" font-weight="600" font-size="12">Width = 8 cm</text>
+          <text x="5" y="90" font-weight="600" font-size="12">H = 5 cm</text>
         </svg></div>`;
       }
       return "";
@@ -1302,30 +1853,27 @@
         return `<div>
           <input type="text" id="type-a-input" class="carbon-input" value="${currentVal}" oninput="saveResponse('${item.id}', this.value)" placeholder="Type answer...">
           
-          <!-- Embedded Math Keypad -->
-          <div class="inline-keypad-box">
-            <div style="font-weight:600;font-size:0.8rem;color:var(--on-surface-variant);margin-bottom:4px;">Math Keypad</div>
-            <div class="keypad-grid">
-              <button type="button" class="key-btn" onclick="keypadInput('7')">7</button>
-              <button type="button" class="key-btn" onclick="keypadInput('8')">8</button>
-              <button type="button" class="key-btn" onclick="keypadInput('9')">9</button>
-              <button type="button" class="key-btn action" onclick="keypadInput('/')">/</button>
+          <!-- Embedded Inline Keypad -->
+          <div class="inline-keypad">
+            <button type="button" class="key-btn" onclick="keypadInput('7')">7</button>
+            <button type="button" class="key-btn" onclick="keypadInput('8')">8</button>
+            <button type="button" class="key-btn" onclick="keypadInput('9')">9</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('/')">/</button>
 
-              <button type="button" class="key-btn" onclick="keypadInput('4')">4</button>
-              <button type="button" class="key-btn" onclick="keypadInput('5')">5</button>
-              <button type="button" class="key-btn" onclick="keypadInput('6')">6</button>
-              <button type="button" class="key-btn action" onclick="keypadInput('*')">×</button>
+            <button type="button" class="key-btn" onclick="keypadInput('4')">4</button>
+            <button type="button" class="key-btn" onclick="keypadInput('5')">5</button>
+            <button type="button" class="key-btn" onclick="keypadInput('6')">6</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('*')">×</button>
 
-              <button type="button" class="key-btn" onclick="keypadInput('1')">1</button>
-              <button type="button" class="key-btn" onclick="keypadInput('2')">2</button>
-              <button type="button" class="key-btn" onclick="keypadInput('3')">3</button>
-              <button type="button" class="key-btn action" onclick="keypadInput('-')">-</button>
+            <button type="button" class="key-btn" onclick="keypadInput('1')">1</button>
+            <button type="button" class="key-btn" onclick="keypadInput('2')">2</button>
+            <button type="button" class="key-btn" onclick="keypadInput('3')">3</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('-')">-</button>
 
-              <button type="button" class="key-btn" onclick="keypadInput('0')">0</button>
-              <button type="button" class="key-btn" onclick="keypadInput('.')">.</button>
-              <button type="button" class="key-btn action" onclick="keypadInput('+')">+</button>
-              <button type="button" class="key-btn action" onclick="keypadBackspace()">⌫</button>
-            </div>
+            <button type="button" class="key-btn" onclick="keypadInput('0')">0</button>
+            <button type="button" class="key-btn" onclick="keypadInput('.')">.</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('+')">+</button>
+            <button type="button" class="key-btn action" onclick="keypadBackspace()">⌫</button>
           </div>
         </div>`;
       }
@@ -1362,7 +1910,7 @@
         }
         return `<div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
           <svg viewBox="0 0 360 64" width="100%" style="max-width:360px;">${parts}</svg>
-          <button type="button" class="btn btn-secondary" onclick="clearShade('${item.id}', ${item.diagramData.total})">Clear Shading</button>
+          <button type="button" class="btn btn-secondary" onclick="clearShade('${item.id}', ${item.diagramData.total})">Reset Shading</button>
         </div>`;
       }
       if (item.type === "E") {
@@ -1374,7 +1922,8 @@
           if (isSel) cls += " selected";
           if (isStruck) cls += " struck";
           return `<div class="${cls}" onclick="toggleOptionE('${item.id}', '${opt.id}')">
-            <input type="checkbox" ${isSel ? 'checked' : ''} style="pointer-events:none;">
+            <input type="checkbox" ${isSel ? 'checked' : ''} style="margin-top:3px;pointer-events:none;">
+            <div class="opt-key">${opt.id}</div>
             <div style="font-size:0.95rem;line-height:1.4;">${opt.text}</div>
           </div>`;
         }).join("") + `</div>`;
@@ -1465,7 +2014,7 @@
       btn.style.background = strikeModeActive ? "#e0e0e0" : "transparent";
     }
 
-    /* DRAGGABLE FLOATING SCRATCHPAD LOGIC */
+    /* Floating Scratchpad Window Functions */
     function toggleScratchpad() {
       isScratchActive = !isScratchActive;
       const box = document.getElementById("scratchpad-floating-window");
@@ -1484,8 +2033,8 @@
 
     function setupScratchCanvas() {
       const canvas = document.getElementById("scratchpad-canvas");
-      canvas.width = canvas.offsetWidth || 440;
-      canvas.height = canvas.offsetHeight || 340;
+      canvas.width = canvas.offsetWidth || 420;
+      canvas.height = canvas.offsetHeight || 310;
       const ctx = canvas.getContext("2d");
 
       canvas.onpointerdown = function(e) {
@@ -1499,7 +2048,7 @@
         const rect = canvas.getBoundingClientRect();
         if (scratchTool === "eraser") {
           ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 16;
+          ctx.lineWidth = 14;
         } else {
           ctx.strokeStyle = "#0f62fe";
           ctx.lineWidth = 3;
@@ -1509,7 +2058,6 @@
         ctx.stroke();
       };
       canvas.onpointerup = function() { isDrawing = false; };
-      canvas.onpointercancel = function() { isDrawing = false; };
     }
 
     function clearScratchCanvas() {
@@ -1518,54 +2066,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function makeScratchpadDraggable() {
-      const box = document.getElementById("scratchpad-floating-window");
-      const header = document.getElementById("scratchpad-drag-header");
-      let isDragging = false;
-      let startX, startY, initialLeft, initialTop;
-
-      header.addEventListener("pointerdown", function(e) {
-        if (e.target.closest("button")) return;
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        
-        const rect = box.getBoundingClientRect();
-        initialLeft = rect.left;
-        initialTop = rect.top;
-
-        box.style.bottom = "auto";
-        box.style.right = "auto";
-        box.style.left = initialLeft + "px";
-        box.style.top = initialTop + "px";
-
-        header.setPointerCapture(e.pointerId);
-      });
-
-      header.addEventListener("pointermove", function(e) {
-        if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        let newLeft = initialLeft + dx;
-        let newTop = initialTop + dy;
-
-        newLeft = Math.max(0, Math.min(window.innerWidth - box.offsetWidth, newLeft));
-        newTop = Math.max(0, Math.min(window.innerHeight - box.offsetHeight, newTop));
-
-        box.style.left = newLeft + "px";
-        box.style.top = newTop + "px";
-      });
-
-      header.addEventListener("pointerup", function(e) {
-        if (isDragging) {
-          isDragging = false;
-          try { header.releasePointerCapture(e.pointerId); } catch(err){}
-        }
-      });
-    }
-
-    /* REVIEW ANSWERS MODAL */
+    /* Review Answers Modal Workflow */
     function openReviewModal() {
       const form = FORMS[activeFormId];
       let completedCount = 0;
@@ -1580,37 +2081,28 @@
         } else {
           isDone = val !== undefined && String(val).trim() !== "";
         }
-
         if (isDone) completedCount++;
 
         const isFlg = flaggedItems[it.id];
-        const statusClass = isDone ? "color:var(--success);font-weight:600;" : "color:var(--warning);font-weight:600;";
-        const statusText = isDone ? "✓ Completed" : "⚠️ Not Completed";
-        const flagText = isFlg ? `<span style="color:var(--error);font-weight:700;margin-left:8px;">🚩 Flagged</span>` : "";
+        const statusBadge = isDone 
+          ? `<span style="color:var(--success);font-weight:700;font-size:0.8rem;">✓ Completed</span>`
+          : `<span style="color:var(--error);font-weight:700;font-size:0.8rem;">⚠️ Not Completed</span>`;
+        
+        const flagBadge = isFlg ? `<span style="color:var(--error);font-weight:700;font-size:0.8rem;margin-left:8px;">🚩 Flagged</span>` : '';
 
-        return `<div onclick="jumpToItemFromReview(${idx})" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--outline);border-radius:6px;background:#ffffff;cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-weight:700;width:32px;height:32px;border-radius:4px;background:var(--surface);display:flex;align-items:center;justify-content:center;">Q${idx + 1}</span>
-            <div>
-              <div style="font-weight:600;font-size:0.9rem;">${it.prompt}</div>
-              <div style="font-size:0.75rem;color:var(--on-surface-variant);">${it.ccss} • ${it.type === "A" ? "Numeric Entry" : it.type === "B" ? "Multiple Choice" : it.type === "C" ? "Matching Grid" : "Interactive"}</div>
-            </div>
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--outline);border-radius:6px;background:#ffffff;cursor:pointer;" onclick="jumpToItemFromReview(${idx})">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--font-mono);font-weight:700;color:var(--primary);">Q${idx + 1}</span>
+            <span style="font-size:0.88rem;color:var(--on-surface);">${it.ccss} — ${it.prompt.substring(0, 45)}...</span>
           </div>
-          <div style="font-size:0.85rem;display:flex;align-items:center;">
-            <span style="${statusClass}">${statusText}</span>
-            ${flagText}
-          </div>
+          <div>${statusBadge}${flagBadge}</div>
         </div>`;
       }).join("");
 
-      const summaryHtml = `
-        <div style="text-align:center;"><div style="font-size:1.2rem;font-weight:700;">${form.items.length}</div><div style="font-size:0.75rem;color:var(--on-surface-variant);">Total Questions</div></div>
-        <div style="text-align:center;"><div style="font-size:1.2rem;font-weight:700;color:var(--success);">${completedCount}</div><div style="font-size:0.75rem;color:var(--on-surface-variant);">Completed</div></div>
-        <div style="text-align:center;"><div style="font-size:1.2rem;font-weight:700;color:var(--warning);">${form.items.length - completedCount}</div><div style="font-size:0.75rem;color:var(--on-surface-variant);">Not Completed</div></div>
-      `;
-
-      document.getElementById("review-modal-summary").innerHTML = summaryHtml;
-      document.getElementById("review-modal-item-list").innerHTML = itemsHtml;
+      document.getElementById("review-total-count").textContent = form.items.length;
+      document.getElementById("review-completed-count").textContent = completedCount;
+      document.getElementById("review-remaining-count").textContent = form.items.length - completedCount;
+      document.getElementById("review-items-list").innerHTML = itemsHtml;
       document.getElementById("review-answers-modal").classList.add("open");
     }
 
@@ -1644,103 +2136,62 @@
           if (!isNaN(numVal) && numVal === it.rubric.expected) isCorrect = true;
         } else if (it.rubric.kind === "exact") {
           if (resp === it.rubric.expected) isCorrect = true;
-        } else if (it.rubric.kind === "matching") {
+        } else if (it.rubric.kind === "grid") {
           if (typeof resp === "object" && resp !== null) {
-            let allMatch = true;
-            Object.keys(it.rubric.expected).forEach(rk => {
-              if (resp[rk] !== it.rubric.expected[rk]) allMatch = false;
-            });
-            if (allMatch) isCorrect = true;
+            const matches = Object.keys(it.rubric.expected).every(k => resp[k] === it.rubric.expected[k]);
+            if (matches) isCorrect = true;
           }
         } else if (it.rubric.kind === "shading") {
           if (Array.isArray(resp)) {
-            const count = resp.filter(x => x === true).length;
-            if (count === it.rubric.targetShaded) isCorrect = true;
+            const shadedCount = resp.filter(Boolean).length;
+            if (shadedCount === it.rubric.targetShaded) isCorrect = true;
           }
-        } else if (it.rubric.kind === "multiSelect") {
+        } else if (it.rubric.kind === "multi") {
           if (Array.isArray(resp)) {
-            const sortedResp = [...resp].sort().join(",");
-            const sortedExp = [...it.rubric.expected].sort().join(",");
-            if (sortedResp === sortedExp) isCorrect = true;
+            const isMatch = resp.length === it.rubric.expected.length && resp.every(x => it.rubric.expected.includes(x));
+            if (isMatch) isCorrect = true;
           }
         }
 
         const pts = isCorrect ? it.points : 0;
         earned += pts;
-        results.push({ item: it, isCorrect, pts });
+        results.push({ item: it, isCorrect, earned: pts });
       });
 
       const pct = Math.round((earned / possible) * 100);
       renderScoreReportHTML(form, earned, possible, pct, results);
       document.getElementById("score-report-modal").classList.add("open");
-
-      // Log attempt into local history table
-      const historyTable = document.getElementById("history-table-body");
-      if (historyTable) {
-        const row = `<tr>
-          <td>${studentName}</td>
-          <td>Grade ${enrolledGrade}</td>
-          <td>Grade ${form.grade} (${form.id})</td>
-          <td>${earned} / ${possible}</td>
-          <td><strong>${pct}%</strong></td>
-        </tr>`;
-        if (historyTable.innerHTML.includes("No test attempts recorded yet")) {
-          historyTable.innerHTML = row;
-        } else {
-          historyTable.innerHTML = row + historyTable.innerHTML;
-        }
-      }
     }
 
     function renderScoreReportHTML(form, earned, possible, pct, results) {
-      const container = document.getElementById("score-report-modal-body");
-      let statusColor = pct >= 80 ? "var(--success)" : pct >= 50 ? "var(--warning)" : "var(--error)";
-      let statusLabel = pct >= 80 ? "Mastered" : pct >= 50 ? "Developing" : "Needs Review";
+      const body = document.getElementById("score-report-body");
+      let itemRows = results.map((r, i) => `<tr>
+        <td><strong>Q${i + 1}</strong> (${r.item.ccss})</td>
+        <td>${r.isCorrect ? '<span style="color:var(--success);font-weight:700;">Correct (+1)</span>' : '<span style="color:var(--error);font-weight:700;">Incorrect (0)</span>'}</td>
+      </tr>`).join("");
 
-      let html = `
-        <div style="background:#f8f9fa;padding:16px;border-radius:6px;border:1px solid var(--outline);margin-bottom:16px;">
-          <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">${studentName}</div>
-          <p style="font-size:0.85rem;color:var(--on-surface-variant);">Enrolled Grade: ${enrolledGrade} · Test Level: Grade ${form.grade} (${form.id})</p>
-          <div style="display:flex;gap:20px;align-items:center;margin-top:12px;">
-            <div>
-              <span style="font-size:0.75rem;color:var(--on-surface-variant);display:block;">Overall Score</span>
-              <span style="font-size:1.5rem;font-weight:700;">${earned} / ${possible} (${pct}%)</span>
-            </div>
-            <div>
-              <span style="font-size:0.75rem;color:var(--on-surface-variant);display:block;">Status</span>
-              <span style="font-size:1rem;font-weight:700;color:${statusColor};">${statusLabel}</span>
-            </div>
-          </div>
+      body.innerHTML = `
+        <div style="background:var(--primary-container);padding:16px;border-radius:6px;margin-bottom:16px;">
+          <h3 style="font-size:1.1rem;font-weight:700;color:var(--primary);">${studentName || 'Student'} — Score: ${earned} / ${possible} (${pct}%)</h3>
+          <p style="font-size:0.88rem;margin-top:4px;">Enrolled Grade: ${enrolledGrade} · Test Level: Grade ${form.grade}</p>
         </div>
-        <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:8px;">Itemized Diagnostic Breakdown</h4>
-        <div style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;">
+        <table class="matching-table">
+          <thead><tr><th>Item Standard</th><th>Result</th></tr></thead>
+          <tbody>${itemRows}</tbody>
+        </table>
       `;
-
-      results.forEach((r, idx) => {
-        const badgeColor = r.isCorrect ? "background:#e8f5e9;color:#2e7d32;" : "background:#fff1f1;color:#da1e28;";
-        const badgeIcon = r.isCorrect ? "✓ Correct" : "✕ Incorrect";
-        html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid var(--outline);border-radius:4px;">
-          <div>
-            <div style="font-weight:600;font-size:0.85rem;">Q${idx + 1}. ${r.item.prompt}</div>
-            <div style="font-size:0.75rem;color:var(--on-surface-variant);">${r.item.ccss} · Claim ${r.item.claim} · DOK ${r.item.dok}</div>
-          </div>
-          <span style="padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:700;${badgeColor}">${badgeIcon} (${r.pts}/${r.item.points} pt)</span>
-        </div>`;
-      });
-
-      html += `</div>`;
-      container.innerHTML = html;
     }
 
     function closeScoreReport() {
       document.getElementById("score-report-modal").classList.remove("open");
     }
 
+    /* JSON Test Importer (Auto-Populates Dropdown) */
     function importCustomJson() {
       const textarea = document.getElementById("json-import-textarea");
       const raw = textarea.value.trim();
       if (!raw) {
-        alert("Please paste a valid JSON string.");
+        alert("Please paste or enter a valid JSON string.");
         return;
       }
 
@@ -1754,29 +2205,27 @@
         FORMS[parsed.id] = parsed;
         activeFormId = parsed.id;
 
+        saveCustomFormToStorage(parsed);
         updateFormDropdowns(parsed.id, parsed.title || parsed.id);
         refreshAdminShareLinks();
-        alert(`Test Form "${parsed.id}" saved/updated successfully!`);
+        alert(`Test Form "${parsed.title || parsed.id}" saved/updated successfully!`);
       } catch (err) {
         alert("Error parsing JSON: " + err.message);
       }
     }
 
     function updateFormDropdowns(formId, formTitle) {
-      ["admin-form-selector", "editor-form-selector"].forEach(id => {
-        const selector = document.getElementById(id);
-        if (selector) {
-          let existingOpt = selector.querySelector(`option[value="${formId}"]`);
-          if (!existingOpt) {
-            existingOpt = document.createElement("option");
-            existingOpt.value = formId;
-            existingOpt.textContent = formTitle;
-            selector.appendChild(existingOpt);
-          } else {
-            existingOpt.textContent = formTitle;
-          }
-          selector.value = formId;
+      ["admin-form-selector", "admin-form-selector-editor"].forEach(selId => {
+        const selector = document.getElementById(selId);
+        if (!selector) return;
+        let opt = selector.querySelector(`option[value="${formId}"]`);
+        if (!opt) {
+          opt = document.createElement("option");
+          opt.value = formId;
+          opt.textContent = formTitle.startsWith("Grade") || formTitle.startsWith("Custom") ? formTitle : `Custom: ${formTitle}`;
+          selector.appendChild(opt);
         }
+        selector.value = formId;
       });
     }
 
@@ -1784,7 +2233,7 @@
       const val = document.getElementById("gas-url-input").value.trim();
       if (val) {
         localStorage.setItem("sbac_gas_url", val);
-        alert("Apps Script Webhook URL saved locally!");
+        alert("Google Apps Script Webhook URL saved successfully!");
       }
     }
   </script>
