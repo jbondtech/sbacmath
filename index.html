@@ -558,10 +558,7 @@
         </div>
         <textarea id="json-import-textarea" class="carbon-input" style="height:320px;font-family:var(--font-mono);font-size:0.85rem;" placeholder='JSON form data will appear here...'></textarea>
         <div style="display:flex;gap:12px;">
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <button type="button" class="btn btn-primary" style="width:max-content;" onclick="importCustomJson()">Save / Update Form JSON</button>
-          <button type="button" class="btn btn-secondary" style="width:max-content;background:#057a55;color:#ffffff;border:none;" onclick="downloadStandaloneAppHtml()">📥 Download Standalone Student Test (.html)</button>
-        </div>
         </div>
       </div>
 
@@ -680,400 +677,6 @@
   <script>
     /* Built-in SBAC Test Forms */
     const FORMS = {
-      "G3-FULL-SUMMATIVE-FORM-B": {
-      "id": "G3-FULL-SUMMATIVE-FORM-B",
-      "title": "Grade 3 Mathematics \u2014 Comprehensive Summative Assessment (Form B)",
-      "grade": 3,
-      "items": [
-            {
-                  "id": "G3-01",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.OA.A.3",
-                  "claim": 1,
-                  "stimulus": "<p>A third-grade teacher arranges desks in the classroom into equal rows for a science activity. There are <strong>6 rows</strong> with <strong>7 desks</strong> in each row.</p>",
-                  "prompt": "How many desks are in the classroom in all?",
-                  "instruction": "Type a whole number using the keypad or keyboard.",
-                  "diagramType": "array",
-                  "diagramData": {
-                        "rows": 6,
-                        "cols": 7,
-                        "label": "6 rows of 7 desks"
-                  },
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 42,
-                        "unit": "desks"
-                  }
-            },
-            {
-                  "id": "G3-02",
-                  "type": "D",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.NF.A.1",
-                  "claim": 1,
-                  "stimulus": "<p>A garden bed is divided into <strong>8 equal sections</strong>. Maya plants tomatoes in <strong>3/8</strong> of the garden bed.</p>",
-                  "prompt": "Click sections on the bar model to shade 3/8 of the garden bed.",
-                  "instruction": "Click sections to shade or unshade.",
-                  "diagramType": "fractionBarStatic",
-                  "diagramData": {
-                        "total": 8,
-                        "note": "8 equal parts"
-                  },
-                  "rubric": {
-                        "kind": "shading",
-                        "totalParts": 8,
-                        "targetShaded": 3
-                  }
-            },
-            {
-                  "id": "G3-03",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.OA.D.8",
-                  "claim": 2,
-                  "stimulus": "<p>There are <strong>9 cherry trees</strong> in an orchard. Kim picks <strong>8 cherries</strong> from each tree. Then Kim eats <strong>14</strong> of the cherries she picked.</p>",
-                  "prompt": "Enter the number of cherries Kim has left.",
-                  "instruction": "Use the Math Keypad or keyboard to enter a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 58,
-                        "unit": "cherries"
-                  }
-            },
-            {
-                  "id": "G3-04",
-                  "type": "B",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.OA.B.5",
-                  "claim": 3,
-                  "stimulus": "<p>Libby tried to solve the multiplication problem <strong>5 \u00d7 2 \u00d7 3</strong>. Her work is shown below:</p><ul><li>Step 1: 5 \u00d7 2 = 10</li><li>Step 2: 5 \u00d7 3 = 15</li><li>Step 3: 10 + 15 = 25</li></ul>",
-                  "prompt": "Which statement correctly explains why Libby's answer is incorrect?",
-                  "instruction": "Select the single best answer.",
-                  "options": [
-                        {
-                              "id": "A",
-                              "text": "Libby's answer is correct because 10 + 15 = 25."
-                        },
-                        {
-                              "id": "B",
-                              "text": "Libby's answer is correct because 2 + 3 = 5 and 5 \u00d7 5 = 25."
-                        },
-                        {
-                              "id": "C",
-                              "text": "Libby's answer is incorrect because she multiplied 5 \u00d7 2 and 5 \u00d7 3 instead of multiplying 10 \u00d7 3."
-                        },
-                        {
-                              "id": "D",
-                              "text": "Libby's answer is incorrect because she should have added 5 + 2 + 3."
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "exact",
-                        "expected": "C"
-                  }
-            },
-            {
-                  "id": "G3-05",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.NBT.A.2",
-                  "claim": 1,
-                  "stimulus": "<p>A baker has <strong>159 cups of brown sugar</strong> and <strong>264 cups of white sugar</strong>.</p>",
-                  "prompt": "How many total cups of sugar does the baker have?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 423,
-                        "unit": "cups"
-                  }
-            },
-            {
-                  "id": "G3-06",
-                  "type": "C",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.NF.A.3d",
-                  "claim": 1,
-                  "stimulus": "<p>Decide whether each fraction comparison is True or False.</p>",
-                  "diagramType": "numberLineCompare",
-                  "diagramData": {
-                        "min": 0,
-                        "max": 1,
-                        "labels": [
-                              "0",
-                              "1/4",
-                              "1/2",
-                              "3/4",
-                              "1"
-                        ]
-                  },
-                  "prompt": "Select True or False for each comparison.",
-                  "instruction": "Select one choice in each row.",
-                  "rows": [
-                        {
-                              "id": "r1",
-                              "text": "2/4 is equivalent to 1/2"
-                        },
-                        {
-                              "id": "r2",
-                              "text": "3/8 is greater than 5/8"
-                        },
-                        {
-                              "id": "r3",
-                              "text": "2/6 is less than 4/6"
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "grid",
-                        "expected": {
-                              "r1": "True",
-                              "r2": "False",
-                              "r3": "True"
-                        }
-                  }
-            },
-            {
-                  "id": "G3-07",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 3,
-                  "ccss": "3.OA.D.8",
-                  "claim": 4,
-                  "stimulus": "<p>Jamal's mother is organizing a trip for the baseball team.</p><ul><li>There are <strong>14 players</strong> on the team.</li><li>There are <strong>5 parents</strong> going on the trip.</li><li>Each car can hold a total of <strong>5 people</strong>.</li><li>There must be at least 1 parent in each car.</li></ul>",
-                  "prompt": "What is the fewest number of cars they will need to transport all players and parents?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 4,
-                        "unit": "cars"
-                  }
-            },
-            {
-                  "id": "G3-08",
-                  "type": "E",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.OA.A.1",
-                  "claim": 1,
-                  "stimulus": "<p>Select all the expressions that can be represented by 4 groups of 6 items.</p>",
-                  "prompt": "Select all the correct expressions.",
-                  "instruction": "Select all that apply.",
-                  "options": [
-                        {
-                              "id": "A",
-                              "text": "4 \u00d7 6"
-                        },
-                        {
-                              "id": "B",
-                              "text": "6 + 6 + 6 + 6"
-                        },
-                        {
-                              "id": "C",
-                              "text": "4 + 6"
-                        },
-                        {
-                              "id": "D",
-                              "text": "6 \u00d7 4"
-                        },
-                        {
-                              "id": "E",
-                              "text": "24 \u00f7 4"
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "exactSet",
-                        "expected": [
-                              "A",
-                              "B",
-                              "D"
-                        ]
-                  }
-            },
-            {
-                  "id": "G3-09",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.MD.C.7b",
-                  "claim": 1,
-                  "stimulus": "<p>A rectangular playground carpet is <strong>8 meters long</strong> and <strong>5 meters wide</strong>.</p>",
-                  "diagramType": "areaRect",
-                  "diagramData": {
-                        "length": 8,
-                        "width": 5,
-                        "unit": "m"
-                  },
-                  "prompt": "What is the area of the playground carpet in square meters?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 40,
-                        "unit": "sq meters"
-                  }
-            },
-            {
-                  "id": "G3-10",
-                  "type": "B",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.OA.B.6",
-                  "claim": 1,
-                  "stimulus": "<p>Susan has 3 times as many books as Mary. Mary has 18 books.</p>",
-                  "prompt": "Which equation can be solved to figure out how many books Susan has?",
-                  "instruction": "Select the single correct equation.",
-                  "options": [
-                        {
-                              "id": "A",
-                              "text": "\u25a1 - 3 = 18"
-                        },
-                        {
-                              "id": "B",
-                              "text": "3 + 18 = \u25a1"
-                        },
-                        {
-                              "id": "C",
-                              "text": "18 \u00f7 \u25a1 = 3"
-                        },
-                        {
-                              "id": "D",
-                              "text": "3 \u00d7 18 = \u25a1"
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "exact",
-                        "expected": "D"
-                  }
-            },
-            {
-                  "id": "G3-11",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.MD.D.8",
-                  "claim": 1,
-                  "stimulus": "<p>A square tile has side lengths of <strong>7 inches</strong>.</p>",
-                  "prompt": "What is the perimeter of the square tile in inches?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 28,
-                        "unit": "inches"
-                  }
-            },
-            {
-                  "id": "G3-12",
-                  "type": "C",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.G.A.1",
-                  "claim": 1,
-                  "stimulus": "<p>Determine whether each shape description is True or False for a quadrilateral.</p>",
-                  "prompt": "Select True or False for each statement.",
-                  "instruction": "Select one response per row.",
-                  "rows": [
-                        {
-                              "id": "r1",
-                              "text": "A rectangle is always a quadrilateral."
-                        },
-                        {
-                              "id": "r2",
-                              "text": "A triangle is a quadrilateral."
-                        },
-                        {
-                              "id": "r3",
-                              "text": "A square has 4 sides and 4 right angles."
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "grid",
-                        "expected": {
-                              "r1": "True",
-                              "r2": "False",
-                              "r3": "True"
-                        }
-                  }
-            },
-            {
-                  "id": "G3-13",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 1,
-                  "ccss": "3.NBT.A.1",
-                  "claim": 1,
-                  "stimulus": "<p>Round the number <strong>347</strong> to the nearest ten.</p>",
-                  "prompt": "What is 347 rounded to the nearest ten?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 350
-                  }
-            },
-            {
-                  "id": "G3-14",
-                  "type": "E",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.OA.C.7",
-                  "claim": 3,
-                  "stimulus": "<p>Select all the multiplication facts that equal 36.</p>",
-                  "prompt": "Select all equations that have a product of 36.",
-                  "instruction": "Select all that apply.",
-                  "options": [
-                        {
-                              "id": "A",
-                              "text": "6 \u00d7 6"
-                        },
-                        {
-                              "id": "B",
-                              "text": "4 \u00d7 9"
-                        },
-                        {
-                              "id": "C",
-                              "text": "5 \u00d7 7"
-                        },
-                        {
-                              "id": "D",
-                              "text": "9 \u00d7 4"
-                        },
-                        {
-                              "id": "E",
-                              "text": "3 \u00d7 12"
-                        }
-                  ],
-                  "rubric": {
-                        "kind": "exactSet",
-                        "expected": [
-                              "A",
-                              "B",
-                              "D",
-                              "E"
-                        ]
-                  }
-            },
-            {
-                  "id": "G3-15",
-                  "type": "A",
-                  "points": 1,
-                  "dok": 2,
-                  "ccss": "3.MD.A.1",
-                  "claim": 2,
-                  "stimulus": "<p>Recess starts at <strong>10:15 AM</strong> and ends at <strong>10:45 AM</strong>.</p>",
-                  "prompt": "How many minutes long is recess?",
-                  "instruction": "Type a whole number.",
-                  "rubric": {
-                        "kind": "numeric",
-                        "expected": 30,
-                        "unit": "minutes"
-                  }
-            }
-      ]
-},
       "G3-FORM-A": {
         id: "G3-FORM-A",
         title: "Grade 3 Mathematics — Practice Test Form A",
@@ -1407,80 +1010,6 @@
       }
     };
 
-    
-    /* UTF-8 Safe Base64 URL Test Data Encoder/Decoder */
-    function encodeFormToJsonData(formObj) {
-      try {
-        const jsonStr = JSON.stringify(formObj);
-        return btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-          return String.fromCharCode('0x' + p1);
-        }));
-      } catch(e) {
-        console.error("Encoding error", e);
-        return "";
-      }
-    }
-
-    function decodeJsonDataToForm(b64Str) {
-      try {
-        const jsonStr = decodeURIComponent(Array.prototype.map.call(atob(b64Str), function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonStr);
-      } catch(e) {
-        console.error("Decoding error", e);
-        return null;
-      }
-    }
-
-    function saveCustomFormToStorage(formObj) {
-      try {
-        let stored = localStorage.getItem("sbac_custom_forms");
-        let parsedDict = stored ? JSON.parse(stored) : {};
-        parsedDict[formObj.id] = formObj;
-        localStorage.setItem("sbac_custom_forms", JSON.stringify(parsedDict));
-      } catch(e) {
-        console.error("Storage error", e);
-      }
-    }
-
-    function loadCustomFormsFromStorage() {
-      try {
-        let stored = localStorage.getItem("sbac_custom_forms");
-        if (stored) {
-          let parsedDict = JSON.parse(stored);
-          Object.keys(parsedDict).forEach(id => {
-            const form = parsedDict[id];
-            FORMS[id] = form;
-            updateFormDropdowns(id, form.title || id);
-          });
-        }
-      } catch(e) {
-        console.error("Storage load error", e);
-      }
-    }
-
-    function downloadStandaloneAppHtml() {
-      const currentForm = FORMS[activeFormId];
-      if (!currentForm) return;
-
-      let docHtml = document.documentElement.outerHTML;
-      const formsJsString = "const FORMS = " + JSON.stringify(FORMS, null, 2) + ";";
-      
-      docHtml = docHtml.replace(/\/\* Built-in SBAC Test Forms \*\/[\s\S]*?\/\* App State Variables \*\//, 
-        "/* Built-in SBAC Test Forms */\n    " + formsJsString + "\n\n    /* App State Variables */");
-
-      const blob = new Blob([docHtml], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `sbac_practice_test_${currentForm.id.toLowerCase()}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
     /* App State Variables */
     let activeFormId = "G4-FORM-A";
     let activeItemIdx = 0;
@@ -1502,8 +1031,6 @@
 
     /* Page Initialization */
     window.addEventListener("DOMContentLoaded", function() {
-      loadCustomFormsFromStorage();
-
       const urlParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
       
@@ -1511,26 +1038,12 @@
         isStudentMode = true;
       }
       
-      const testDataParam = hashParams.get("testData") || urlParams.get("testData");
-      if (testDataParam) {
-        const decodedForm = decodeJsonDataToForm(testDataParam);
-        if (decodedForm && decodedForm.id && Array.isArray(decodedForm.items)) {
-          FORMS[decodedForm.id] = decodedForm;
-          activeFormId = decodedForm.id;
-          updateFormDropdowns(decodedForm.id, decodedForm.title || decodedForm.id);
-          saveCustomFormToStorage(decodedForm);
-        }
-      } else {
-        const testParam = urlParams.get("test") || hashParams.get("test");
-        if (testParam && FORMS[testParam]) {
-          activeFormId = testParam;
-        }
+      const testParam = urlParams.get("test") || hashParams.get("test");
+      if (testParam && FORMS[testParam]) {
+        activeFormId = testParam;
       }
 
       if (isStudentMode) {
-        const adminToggleGroup = document.getElementById("admin-view-toggle-group");
-        if (adminToggleGroup) adminToggleGroup.style.display = "none";
-
         document.getElementById("student-preview-banner").style.display = "none";
         document.getElementById("sbac-toolbar-strip").style.display = "flex";
         document.getElementById("timer-badge-box").style.display = "flex";
@@ -1598,16 +1111,7 @@
       let base = window.location.href.split("#")[0].split("?")[0];
       base = base.replace(/^blob:/i, "");
       
-      const currentForm = FORMS[activeFormId];
-      let studentUrl = "";
-      
-      if (currentForm) {
-        const dataStr = encodeFormToJsonData(currentForm);
-        studentUrl = `${base}?mode=student&test=${encodeURIComponent(activeFormId)}#testData=${dataStr}`;
-      } else {
-        studentUrl = `${base}?mode=student&test=${encodeURIComponent(activeFormId)}`;
-      }
-      
+      const studentUrl = `${base}?mode=student&test=${activeFormId}`;
       document.getElementById("shareable-student-link").value = studentUrl;
 
       // Render Simple Inline SVG QR
@@ -2146,7 +1650,7 @@
             const shadedCount = resp.filter(Boolean).length;
             if (shadedCount === it.rubric.targetShaded) isCorrect = true;
           }
-        } else if (it.rubric.kind === "multi") {
+        } else if (it.rubric.kind === "multi" || it.rubric.kind === "exactSet") {
           if (Array.isArray(resp)) {
             const isMatch = resp.length === it.rubric.expected.length && resp.every(x => it.rubric.expected.includes(x));
             if (isMatch) isCorrect = true;
@@ -2205,7 +1709,6 @@
         FORMS[parsed.id] = parsed;
         activeFormId = parsed.id;
 
-        saveCustomFormToStorage(parsed);
         updateFormDropdowns(parsed.id, parsed.title || parsed.id);
         refreshAdminShareLinks();
         alert(`Test Form "${parsed.title || parsed.id}" saved/updated successfully!`);
