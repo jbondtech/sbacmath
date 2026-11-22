@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SBAC Aligned Elementary Math Assessment Console</title>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --primary: #0f62fe;
+      --primary-container: #edf5ff;
+      --secondary: #393939;
+      --surface: #ffffff;
+      --background: #f4f4f4;
+      --outline: #8d8d8d;
+      --outline-variant: #e0e0e0;
+      --on-surface: #161616;
+      --on-surface-variant: #525252;
+      --error: #da1e28;
+      --success: #198038;
+      --warning: #f1c21b;
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "IBM Plex Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-main);
+      background-color: var(--background);
+      color: var(--on-surface);
+      line-height: 1.4;
+      user-select: none;
+    }
+
+    /* Top Navigation Header */
+    .sbac-header {
+      background-color: #161616;
+      color: #ffffff;
+      height: 48px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .brand-title { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+    .badge-pill {
+      background: #393939;
+      color: #ffffff;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .nav-mode-btn {
+      background: transparent;
+      border: 1px solid #525252;
+      color: #ffffff;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-mode-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .timer-badge {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      background: #262626;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid #393939;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sub-header Student Toolbar */
+    .sbac-toolbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--outline-variant);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .tool-group { display: flex; align-items: center; gap: 8px; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-ghost:hover { background: #e8e8e8; }
+    .btn-ghost.active { background: #e0e0e0; border-color: var(--outline); color: var(--primary); }
+
+    /* Question Nav Strip */
+    .q-nav-strip {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 2px 0;
+    }
+    .q-item-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--outline);
+      background: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .q-item-btn.current { border: 2px solid var(--primary); font-weight: 700; background: var(--primary-container); }
+    .q-item-btn.answered { background: #e8f5e9; border-color: var(--success); color: var(--success); }
+    .q-item-btn.flagged::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 6px;
+      height: 6px;
+      background: var(--error);
+      border-radius: 50%;
+    }
+
+    /* Views Layout */
+    .view-container { display: none; padding: 20px; max-width: 1100px; margin: 0 auto; }
+    .view-container.active { display: block; }
+
+    /* Student View Container */
+    .student-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 850px) {
+      .student-layout { grid-template-columns: 1fr; }
+    }
+
+    .item-card {
+      background: #ffffff;
+      border: 1px solid var(--outline-variant);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .item-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--outline-variant);
+    }
+    .item-number { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .item-points { font-size: 0.8rem; font-weight: 600; background: #e0e0e0; padding: 2px 8px; border-radius: 4px; }
+
+    .stimulus-box {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #262626;
+    }
+
+    .stimulus-box img, .diagram-svg-box {
+      display: block;
+      margin: 14px 0;
+      max-width: 100%;
+    }
+
+    .prompt-box {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+      color: #161616;
+    }
+
+    /* Response Options Styles */
+    .option-list { display: flex; flex-direction: column; gap: 10px; }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--outline);
+      border-radius: 6px;
+      cursor: pointer;
+      background: #ffffff;
+      transition: all 0.15s;
+    }
+    .option-item:hover { background: #f4f4f4; border-color: var(--primary); }
+    .option-item.selected { background: var(--primary-container); border: 2px solid var(--primary); font-weight: 600; }
+    .option-item.struck { text-decoration: line-through; opacity: 0.45; background: #f4f4f4; }
+
+    /* Keypad & Numeric Input */
+    .carbon-input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 1px solid var(--outline);
+      border-radius: 4px;
+      outline: none;
+      font-family: var(--font-main);
+    }
+    .carbon-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15,98,254,0.2); }
+
+    .keypad-container {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 54px);
+      gap: 6px;
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid var(--outline-variant);
+      border-radius: 6px;
+      width: max-content;
+    }
+    .key-btn {
+      height: 44px;
+      background: #ffffff;
+      border: 1px solid var(--outline);
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .key-btn:active { background: #e0e0e0; }
+    .key-btn.action { background: #e0e0e0; font-size: 0.95rem; }
+
+    /* Grid / Table Choice */
+    .matching-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .matching-table th, .matching-table td {
+      border: 1px solid var(--outline);
+      padding: 10px;
+      text-align: center;
+    }
+    .matching-table th:first-child, .matching-table td:first-child {
+      text-align: left;
+    }
+
+    /* Fraction Shading Bar */
+    .fraction-bar-interactive {
+      display: flex;
+      width: 100%;
+      max-width: 440px;
+      height: 48px;
+      border: 2px solid var(--on-surface);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0;
+      cursor: pointer;
+    }
+    .fraction-part {
+      flex: 1;
+      border-right: 1px solid var(--on-surface);
+      background: #ffffff;
+      transition: background 0.15s;
+    }
+    .fraction-part:last-child { border-right: none; }
+    .fraction-part.shaded { background: var(--primary); }
+
+    /* Bottom Action Controls */
+    .item-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--outline-variant);
+    }
+    .btn {
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: #0353e9; }
+    .btn-secondary { background: var(--secondary); color: #ffffff; }
+    .btn-secondary:hover { background: #4c4c4c; }
+
+    /* Teacher Admin Panel */
+    .admin-card {
+      background: #ffffff;
+      border: 1px solid var(--outline-variant);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .admin-tab-bar {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--outline-variant);
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* Floating Draggable Scratchpad Window */
+    .scratchpad-floating-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 440px;
+      height: 360px;
+      background: #ffffff;
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      z-index: 120;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      touch-action: none;
+    }
+    .scratchpad-floating-box.open { display: flex; }
+    .scratchpad-header {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: grab;
+      user-select: none;
+    }
+    .scratchpad-header:active { cursor: grabbing; }
+    .scratchpad-tools { display: flex; gap: 6px; }
+    .scratch-tool-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .scratch-tool-btn:hover { background: rgba(255,255,255,0.35); }
+    .scratch-tool-btn.active { background: #ffffff; color: var(--primary); font-weight: 700; }
+
+    #scratchpad-canvas {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    /* Modal Backdrop & Overlays */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 550px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Banner for Teacher Preview Mode */
+    .preview-banner {
+      background: var(--warning);
+      color: #000000;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="sbac-header">
+    <div class="header-left">
+      <div class="brand-title">
+        <i data-lucide="calculator" style="width:22px;height:22px;"></i>
+        <span>SBAC Elementary Math Practice</span>
+      </div>
+      <div class="badge-pill" id="form-pill-display">TEACHER ADMIN PORTAL</div>
+    </div>
+    <div class="header-right">
+      <div class="timer-badge" id="timer-badge-box" style="display:none;">
+        <i data-lucide="clock" style="width:16px;height:16px;"></i>
+        <span id="timer-display">TIME 00:00</span>
+      </div>
+      <button class="nav-mode-btn active" id="nav-btn-admin" onclick="showView('admin')">Teacher Admin</button>
+      <button class="nav-mode-btn" id="nav-btn-student" onclick="showView('student')">Student Test</button>
+    </div>
+  </header>
+
+  <!-- Optional Teacher Preview Banner -->
+  <div class="preview-banner" id="student-preview-banner" style="display:none;">
+    <span>⚠️ TEACHER PREVIEW MODE — Student responses are not saved to attempt history.</span>
+    <button type="button" class="btn btn-secondary" onclick="exitStudentPreview()" style="min-height:26px;padding:2px 10px;font-size:0.8rem;">Exit Preview</button>
+  </div>
+
+  <!-- Sub-Header Toolbar (Student Mode) -->
+  <div class="sbac-toolbar" id="sbac-toolbar-strip" style="display:none;">
+    <div class="tool-group">
+      <button type="button" class="btn-ghost" id="tool-scratch-btn" onclick="toggleScratchpad()">
+        <i data-lucide="edit-3" style="width:16px;height:16px;"></i>
+        <span>Scratchpad</span>
+      </button>
+      <button type="button" class="btn-ghost" id="tool-flag-btn" onclick="toggleFlagCurrent()">
+        <i data-lucide="bookmark" style="width:16px;height:16px;"></i>
+        <span>Flag Question</span>
+      </button>
+      <button type="button" class="btn-ghost" id="tool-strike-btn" onclick="toggleStrikeMode()">
+        <i data-lucide="strikethrough" style="width:16px;height:16px;"></i>
+        <span>Strikethrough</span>
+      </button>
+    </div>
+    <div class="q-nav-strip" id="q-nav-strip">
+      <!-- Item Buttons Dynamically Rendered -->
+    </div>
+  </div>
+
+  <!-- MAIN VIEW: STUDENT TEST WORKSPACE -->
+  <main class="view-container" id="view-student">
+    <div class="student-layout">
+      <!-- Main Question Container -->
+      <div class="item-card">
+        <div class="item-meta">
+          <span class="item-number" id="item-number-title">Question 1</span>
+          <span class="item-points" id="item-points-pill">1 POINT</span>
+        </div>
+
+        <div class="stimulus-box" id="item-stimulus-box">
+          <!-- Stimulus / Problem Context -->
+        </div>
+
+        <div class="prompt-box" id="item-prompt-box">
+          <!-- Question Prompt -->
+        </div>
+
+        <div id="item-response-container">
+          <!-- Interactive Response Input Controls -->
+        </div>
+
+        <div class="item-actions">
+          <button type="button" class="btn btn-secondary" id="btn-prev-item" onclick="prevItem()">Previous</button>
+          <div style="display:flex;gap:10px;">
+            <button type="button" class="btn btn-ghost" onclick="openReviewModal()" style="border-color:var(--primary);color:var(--primary);">Review Answers</button>
+            <button type="button" class="btn btn-primary" id="btn-next-item" onclick="nextItem()">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Reference & Formula Side Panel -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="item-card" style="padding:16px;">
+          <h4 style="font-size:0.9rem;font-weight:700;margin-bottom:8px;color:var(--on-surface-variant);">QUESTION METADATA</h4>
+          <p style="font-size:0.85rem;color:var(--on-surface-variant);" id="side-ccss-display">CCSS: --</p>
+          <p style="font-size:0.85rem;color:var(--on-surface-variant);" id="side-type-display">Item Type: --</p>
+        </div>
+        <div class="item-card" style="padding:16px;">
+          <h4 style="font-size:0.9rem;font-weight:700;margin-bottom:8px;color:var(--on-surface-variant);">MATH REFERENCE</h4>
+          <ul style="font-size:0.8rem;color:var(--on-surface-variant);padding-left:16px;line-height:1.6;">
+            <li><strong>Area</strong> = length × width</li>
+            <li><strong>Perimeter</strong> = distance around shape</li>
+            <li><strong>1 foot</strong> = 12 inches</li>
+            <li><strong>1 yard</strong> = 3 feet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MAIN VIEW: TEACHER ADMIN PORTAL -->
+  <main class="view-container active" id="view-admin">
+    <div class="admin-card">
+      <div class="admin-tab-bar">
+        <button class="tab-btn active" onclick="showAdminSubtab('links', this)">Share Links & Student Preview</button>
+        <button class="tab-btn" onclick="showAdminSubtab('importer', this)">JSON Test Form Editor & Importer</button>
+        <button class="tab-btn" onclick="showAdminSubtab('gas', this)">Google Apps Script Webhook</button>
+        <button class="tab-btn" onclick="showAdminSubtab('history', this)">Attempt History Log</button>
+      </div>
+
+      <!-- Subtab 1: Links & QR & Student Preview -->
+      <div id="admin-subtab-links" style="display:flex;flex-direction:column;gap:16px;">
+        <h3 style="font-size:1.1rem;font-weight:700;">Teacher Setup & Student Link Generator</h3>
+        <p style="font-size:0.9rem;color:var(--on-surface-variant);">
+          Select a test form below to generate a student link with embedded test data or launch a live preview.
+        </p>
+
+        <div style="display:flex;gap:12px;align-items:center;">
+          <label style="font-weight:600;">Test Form:</label>
+          <select id="admin-form-selector" class="carbon-input" style="width:auto;" onchange="loadFormById(this.value)">
+            <option value="G3-FORM-A">Grade 3 — Form A (Core 8 Items)</option>
+            <option value="G3-FULL-SUMMATIVE-FORM-B">Grade 3 — Form B (Full 15-Item Summative)</option>
+            <option value="G4-FORM-A" selected>Grade 4 — Form A (Core 8 Items)</option>
+            <option value="G5-FORM-A">Grade 5 — Form A (Core 8 Items)</option>
+            <option value="G6-FORM-A">Grade 6 — Form A (Core 8 Items)</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+          <input type="text" id="shareable-student-link" class="carbon-input" readonly>
+          <button type="button" class="btn btn-primary" onclick="copyStudentLink()">Copy Link</button>
+          <button type="button" class="btn btn-secondary" onclick="startStudentPreview()" style="background:#0f62fe;color:#ffffff;">Student Preview</button>
+        </div>
+        <div style="margin-top:12px;" id="qr-code-box"></div>
+      </div>
+
+      <!-- Subtab 2: JSON Importer & Editor -->
+      <div id="admin-subtab-importer" style="display:none;flex-direction:column;gap:16px;">
+        <h3 style="font-size:1.1rem;font-weight:700;">JSON Test Form Editor & Importer</h3>
+        <p style="font-size:0.9rem;color:var(--on-surface-variant);">
+          Select any test form from the dropdown to view/edit its JSON structure, or paste a new custom JSON form.
+        </p>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <label style="font-weight:600;">Select Form to Edit:</label>
+          <select id="admin-form-selector-editor" class="carbon-input" style="width:auto;" onchange="loadFormById(this.value)">
+            <option value="G3-FORM-A">Grade 3 — Form A (Core 8 Items)</option>
+            <option value="G3-FULL-SUMMATIVE-FORM-B">Grade 3 — Form B (Full 15-Item Summative)</option>
+            <option value="G4-FORM-A" selected>Grade 4 — Form A (Core 8 Items)</option>
+            <option value="G5-FORM-A">Grade 5 — Form A (Core 8 Items)</option>
+            <option value="G6-FORM-A">Grade 6 — Form A (Core 8 Items)</option>
+          </select>
+        </div>
+        <textarea id="json-import-textarea" class="carbon-input" style="height:320px;font-family:var(--font-mono);font-size:0.85rem;" placeholder="JSON form data will appear here..."></textarea>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" style="width:max-content;" onclick="importCustomJson()">Save / Update Form JSON</button>
+          <button type="button" class="btn btn-secondary" style="width:max-content;background:var(--success);" onclick="exportCustomAppHtml()">📥 Download Standalone Student Test (.html)</button>
+        </div>
+      </div>
+
+      <!-- Subtab 3: GAS Webhook -->
+      <div id="admin-subtab-gas" style="display:none;flex-direction:column;gap:16px;">
+        <h3 style="font-size:1.1rem;font-weight:700;">Google Apps Script Webhook Config</h3>
+        <p style="font-size:0.9rem;color:var(--on-surface-variant);">
+          Enter your deployed Apps Script Web App URL below to automatically log student test scores directly into your Google Sheet.
+        </p>
+        <input type="text" id="gas-url-input" class="carbon-input" placeholder="https://script.google.com/macros/s/.../exec">
+        <button type="button" class="btn btn-primary" style="width:max-content;" onclick="saveGasUrl()">Save Webhook URL</button>
+        <div id="gas-status-msg" style="font-size:0.85rem;font-weight:600;color:var(--success);"></div>
+      </div>
+
+      <!-- Subtab 4: History -->
+      <div id="admin-subtab-history" style="display:none;flex-direction:column;gap:16px;">
+        <h3 style="font-size:1.1rem;font-weight:700;">Local Attempt History Log</h3>
+        <table class="matching-table">
+          <thead>
+            <tr><th>Student Name</th><th>Enrolled Grade</th><th>Test Level</th><th>Score</th><th>Pct</th></tr>
+          </thead>
+          <tbody id="history-table-body">
+            <tr><td colspan="5" style="text-align:center;color:var(--on-surface-variant);">No test attempts recorded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- MOVABLE FLOATING SCRATCHPAD WINDOW -->
+  <div class="scratchpad-floating-box" id="scratchpad-floating-window">
+    <div class="scratchpad-header" id="scratchpad-drag-header">
+      <span>⋮⋮ ✏️ Scratchpad Canvas (Drag to Move)</span>
+      <div class="scratchpad-tools">
+        <button type="button" class="scratch-tool-btn active" id="tool-pen-btn" onclick="setScratchTool('pen')">Pen</button>
+        <button type="button" class="scratch-tool-btn" id="tool-eraser-btn" onclick="setScratchTool('eraser')">Eraser</button>
+        <button type="button" class="scratch-tool-btn" onclick="clearScratchCanvas()">Clear</button>
+        <button type="button" class="scratch-tool-btn" onclick="toggleScratchpad()">✕ Close</button>
+      </div>
+    </div>
+    <canvas id="scratchpad-canvas"></canvas>
+  </div>
+
+  <!-- MODAL: STUDENT NAME & ENROLLED GRADE ENTRY -->
+  <div class="modal-backdrop" id="student-entry-modal">
+    <div class="modal-box">
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">Welcome to SBAC Practice Test</h2>
+      <p style="font-size:0.9rem;color:var(--on-surface-variant);margin-bottom:16px;">
+        Please enter your full name and select your enrolled grade level before beginning.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label style="font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;">First & Last Name</label>
+          <input type="text" id="entry-student-name" class="carbon-input" placeholder="e.g. Maya Lin">
+        </div>
+        <div>
+          <label style="font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;">Enrolled Grade Level</label>
+          <select id="entry-enrolled-grade" class="carbon-input">
+            <option value="3">Grade 3</option>
+            <option value="4" selected>Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-primary" style="margin-top:8px;padding:12px;" onclick="startStudentTest()">Start Practice Test</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REVIEW ANSWERS PRE-SUBMISSION -->
+  <div class="modal-backdrop" id="review-answers-modal">
+    <div class="modal-box" style="max-width:700px;">
+      <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:12px;">Review Answers Before Submitting</h2>
+      <div id="review-summary-list" style="max-height:300px;overflow-y:auto;margin-bottom:16px;border:1px solid var(--outline-variant);border-radius:6px;padding:12px;"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Go Back to Test</button>
+        <button type="button" class="btn btn-primary" style="background:var(--success);color:#ffffff;" onclick="confirmFinalSubmission()">Submit Test</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DIAGNOSTIC SCORE REPORT -->
+  <div class="modal-backdrop" id="score-report-modal">
+    <div class="modal-box" style="max-width:750px;">
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:12px;">Diagnostic Performance Report</h2>
+      <div id="score-report-body" style="max-height:420px;overflow-y:auto;margin-bottom:16px;"></div>
+      <button type="button" class="btn btn-primary" onclick="closeScoreReport()">Return to Console</button>
+    </div>
+  </div>
+
+  <script>
+    /* Built-in SBAC Test Forms Database */
+    const FORMS = {
+      "G3-FORM-A": {
+        id: "G3-FORM-A",
+        title: "Grade 3 Mathematics — Practice Test Form A",
+        grade: 3,
+        items: [
+          {
+            id: "G3-01", type: "A", points: 1, dok: 1, ccss: "3.OA.A.3",
+            stimulus: "<p>A third-grade teacher arranges desks in the classroom into equal rows. There are <strong>6 rows</strong> with <strong>7 desks</strong> in each row.</p>",
+            prompt: "How many desks are in the classroom in all?",
+            rubric: { kind: "numeric", expected: 42 }
+          },
+          {
+            id: "G3-02", type: "D", points: 1, dok: 1, ccss: "3.NF.A.1",
+            stimulus: "<p>A garden bed is divided into <strong>8 equal sections</strong>. Maya plants tomatoes in <strong>3/8</strong> of the garden bed.</p>",
+            prompt: "Click sections on the bar model to shade 3/8 of the garden bed.",
+            diagramData: { total: 8 },
+            rubric: { kind: "shading", targetShaded: 3 }
+          },
+          {
+            id: "G3-03", type: "A", points: 1, dok: 2, ccss: "3.OA.D.8",
+            stimulus: "<p>Kim picks 8 cherries from each of 9 trees. Then Kim eats 14 of the cherries.</p>",
+            prompt: "How many cherries does Kim have left?",
+            rubric: { kind: "numeric", expected: 58 }
+          },
+          {
+            id: "G3-04", type: "B", points: 1, dok: 2, ccss: "3.OA.B.5",
+            stimulus: "<p>Libby tried to solve 5 × 2 × 3. Step 1: 5×2=10. Step 2: 5×3=15. Step 3: 10+15=25.</p>",
+            prompt: "Which statement correctly explains why Libby's answer is incorrect?",
+            options: [
+              { id: "A", text: "Libby's answer is correct because 10 + 15 = 25." },
+              { id: "B", text: "Libby's answer is correct because 2 + 3 = 5 and 5 × 5 = 25." },
+              { id: "C", text: "Libby's answer is incorrect because she should have multiplied 10 × 3." },
+              { id: "D", text: "Libby's answer is incorrect because she should have added 5 + 2 + 3." }
+            ],
+            rubric: { kind: "exact", expected: "C" }
+          },
+          {
+            id: "G3-05", type: "A", points: 1, dok: 1, ccss: "3.NBT.A.2",
+            stimulus: "<p>A baker has 159 cups of brown sugar and 264 cups of white sugar.</p>",
+            prompt: "How many total cups of sugar does the baker have?",
+            rubric: { kind: "numeric", expected: 423 }
+          },
+          {
+            id: "G3-06", type: "C", points: 1, dok: 2, ccss: "3.NF.A.3d",
+            stimulus: "<p>Decide whether each fraction comparison is True or False.</p>",
+            prompt: "Select True or False for each comparison.",
+            rows: [
+              { id: "r1", text: "2/4 is equivalent to 1/2" },
+              { id: "r2", text: "3/8 is greater than 5/8" },
+              { id: "r3", text: "2/6 is less than 4/6" }
+            ],
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
+          },
+          {
+            id: "G3-07", type: "A", points: 1, dok: 3, ccss: "3.OA.D.8",
+            stimulus: "<p>14 players and 5 parents are going on a trip. Each car holds 5 people.</p>",
+            prompt: "What is the fewest number of cars needed?",
+            rubric: { kind: "numeric", expected: 4 }
+          },
+          {
+            id: "G3-08", type: "E", points: 1, dok: 1, ccss: "3.OA.A.1",
+            stimulus: "<p>Select all expressions represented by 4 groups of 6 items.</p>",
+            prompt: "Select all correct expressions.",
+            options: [
+              { id: "A", text: "4 × 6" },
+              { id: "B", text: "6 + 6 + 6 + 6" },
+              { id: "C", text: "4 + 6" },
+              { id: "D", text: "6 × 4" }
+            ],
+            rubric: { kind: "exactSet", expected: ["A", "B", "D"] }
+          }
+        ]
+      },
+      "G3-FULL-SUMMATIVE-FORM-B": {
+        id: "G3-FULL-SUMMATIVE-FORM-B",
+        title: "Grade 3 Mathematics — Comprehensive Summative Assessment (Form B)",
+        grade: 3,
+        items: [
+          {
+            id: "G3-01", type: "A", points: 1, dok: 1, ccss: "3.OA.A.3",
+            stimulus: "<p>A third-grade teacher arranges desks in equal rows. There are <strong>6 rows</strong> with <strong>7 desks</strong> in each row.</p>",
+            prompt: "How many desks are in the classroom in all?",
+            rubric: { kind: "numeric", expected: 42 }
+          },
+          {
+            id: "G3-02", type: "D", points: 1, dok: 1, ccss: "3.NF.A.1",
+            stimulus: "<p>A garden bed is divided into <strong>8 equal sections</strong>. Maya plants tomatoes in <strong>3/8</strong> of the garden bed.</p>",
+            prompt: "Click sections on the bar model to shade 3/8 of the garden bed.",
+            diagramData: { total: 8 },
+            rubric: { kind: "shading", targetShaded: 3 }
+          },
+          {
+            id: "G3-03", type: "A", points: 1, dok: 2, ccss: "3.OA.D.8",
+            stimulus: "<p>There are 9 cherry trees. Kim picks 8 cherries from each tree. Then Kim eats 14 cherries.</p>",
+            prompt: "Enter the number of cherries Kim has left.",
+            rubric: { kind: "numeric", expected: 58 }
+          },
+          {
+            id: "G3-04", type: "B", points: 1, dok: 2, ccss: "3.OA.B.5",
+            stimulus: "<p>Libby tried to solve 5 × 2 × 3. Step 1: 5×2=10. Step 2: 5×3=15. Step 3: 10+15=25.</p>",
+            prompt: "Which statement correctly explains why Libby's answer is incorrect?",
+            options: [
+              { id: "A", text: "Libby's answer is correct because 10 + 15 = 25." },
+              { id: "B", text: "Libby's answer is correct because 2 + 3 = 5 and 5 × 5 = 25." },
+              { id: "C", text: "Libby's answer is incorrect because she multiplied 5 × 2 and 5 × 3 instead of multiplying 10 × 3." },
+              { id: "D", text: "Libby's answer is incorrect because she should have added 5 + 2 + 3." }
+            ],
+            rubric: { kind: "exact", expected: "C" }
+          },
+          {
+            id: "G3-05", type: "A", points: 1, dok: 1, ccss: "3.NBT.A.2",
+            stimulus: "<p>A baker has 159 cups of brown sugar and 264 cups of white sugar.</p>",
+            prompt: "How many total cups of sugar does the baker have?",
+            rubric: { kind: "numeric", expected: 423 }
+          },
+          {
+            id: "G3-06", type: "C", points: 1, dok: 2, ccss: "3.NF.A.3d",
+            stimulus: "<p>Decide whether each fraction comparison is True or False.</p>",
+            prompt: "Select True or False for each comparison.",
+            rows: [
+              { id: "r1", text: "2/4 is equivalent to 1/2" },
+              { id: "r2", text: "3/8 is greater than 5/8" },
+              { id: "r3", text: "2/6 is less than 4/6" }
+            ],
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
+          },
+          {
+            id: "G3-07", type: "A", points: 1, dok: 3, ccss: "3.OA.D.8",
+            stimulus: "<p>14 players and 5 parents are going on a trip. Each car holds 5 people.</p>",
+            prompt: "What is the fewest number of cars needed?",
+            rubric: { kind: "numeric", expected: 4 }
+          },
+          {
+            id: "G3-08", type: "E", points: 1, dok: 1, ccss: "3.OA.A.1",
+            stimulus: "<p>Select all the expressions that can be represented by 4 groups of 6 items.</p>",
+            prompt: "Select all the correct expressions.",
+            options: [
+              { id: "A", text: "4 × 6" },
+              { id: "B", text: "6 + 6 + 6 + 6" },
+              { id: "C", text: "4 + 6" },
+              { id: "D", text: "6 × 4" },
+              { id: "E", text: "24 ÷ 4" }
+            ],
+            rubric: { kind: "exactSet", expected: ["A", "B", "D"] }
+          },
+          {
+            id: "G3-09", type: "A", points: 1, dok: 2, ccss: "3.MD.C.7b",
+            stimulus: "<p>A rectangular playground carpet is 8 meters long and 5 meters wide.</p>",
+            prompt: "What is the area of the playground carpet in square meters?",
+            rubric: { kind: "numeric", expected: 40 }
+          },
+          {
+            id: "G3-10", type: "B", points: 1, dok: 1, ccss: "3.OA.B.6",
+            stimulus: "<p>Susan has 3 times as many books as Mary. Mary has 18 books.</p>",
+            prompt: "Which equation can be solved to figure out how many books Susan has?",
+            options: [
+              { id: "A", text: "□ - 3 = 18" },
+              { id: "B", text: "3 + 18 = □" },
+              { id: "C", text: "18 ÷ □ = 3" },
+              { id: "D", text: "3 × 18 = □" }
+            ],
+            rubric: { kind: "exact", expected: "D" }
+          },
+          {
+            id: "G3-11", type: "A", points: 1, dok: 2, ccss: "3.MD.D.8",
+            stimulus: "<p>A square tile has side lengths of 7 inches.</p>",
+            prompt: "What is the perimeter of the square tile in inches?",
+            rubric: { kind: "numeric", expected: 28 }
+          },
+          {
+            id: "G3-12", type: "C", points: 1, dok: 2, ccss: "3.G.A.1",
+            stimulus: "<p>Determine whether each shape description is True or False for a quadrilateral.</p>",
+            prompt: "Select True or False for each statement.",
+            rows: [
+              { id: "r1", text: "A rectangle is always a quadrilateral." },
+              { id: "r2", text: "A triangle is a quadrilateral." },
+              { id: "r3", text: "A square has 4 sides and 4 right angles." }
+            ],
+            rubric: { kind: "grid", expected: { r1: "True", r2: "False", r3: "True" } }
+          },
+          {
+            id: "G3-13", type: "A", points: 1, dok: 1, ccss: "3.NBT.A.1",
+            stimulus: "<p>Round the number 347 to the nearest ten.</p>",
+            prompt: "What is 347 rounded to the nearest ten?",
+            rubric: { kind: "numeric", expected: 350 }
+          },
+          {
+            id: "G3-14", type: "E", points: 1, dok: 2, ccss: "3.OA.C.7",
+            stimulus: "<p>Select all the multiplication expressions that have a product of 36.</p>",
+            prompt: "Select all expressions that equal 36.",
+            options: [
+              { id: "A", text: "6 × 6" },
+              { id: "B", text: "4 × 9" },
+              { id: "C", text: "5 × 7" },
+              { id: "D", text: "9 × 4" },
+              { id: "E", text: "3 × 12" }
+            ],
+            rubric: { kind: "exactSet", expected: ["A", "B", "D", "E"] }
+          },
+          {
+            id: "G3-15", type: "A", points: 1, dok: 2, ccss: "3.MD.A.1",
+            stimulus: "<p>Recess starts at 10:15 AM and ends at 10:45 AM.</p>",
+            prompt: "How many minutes long is recess?",
+            rubric: { kind: "numeric", expected: 30 }
+          }
+        ]
+      },
+      "G4-FORM-A": {
+        id: "G4-FORM-A",
+        title: "Grade 4 Mathematics — Practice Test Form A",
+        grade: 4,
+        items: [
+          {
+            id: "G4-01", type: "A", points: 1, dok: 1, ccss: "4.NBT.B.4",
+            stimulus: "<p>Calculate the sum of 43,582 and 27,914.</p>",
+            prompt: "Enter the sum.",
+            rubric: { kind: "numeric", expected: 71496 }
+          },
+          {
+            id: "G4-02", type: "B", points: 1, dok: 2, ccss: "4.NF.A.2",
+            stimulus: "<p>Compare 3/5 and 4/7.</p>",
+            prompt: "Which symbol correctly compares the two fractions?",
+            options: [
+              { id: "A", text: "3/5 < 4/7" },
+              { id: "B", text: "3/5 > 4/7" },
+              { id: "C", text: "3/5 = 4/7" }
+            ],
+            rubric: { kind: "exact", expected: "B" }
+          }
+        ]
+      },
+      "G5-FORM-A": {
+        id: "G5-FORM-A",
+        title: "Grade 5 Mathematics — Practice Test Form A",
+        grade: 5,
+        items: [
+          {
+            id: "G5-01", type: "A", points: 1, dok: 1, ccss: "5.NBT.B.7",
+            stimulus: "<p>Calculate 4.5 × 2.3.</p>",
+            prompt: "Enter the product.",
+            rubric: { kind: "numeric", expected: 10.35 }
+          }
+        ]
+      },
+      "G6-FORM-A": {
+        id: "G6-FORM-A",
+        title: "Grade 6 Mathematics — Practice Test Form A",
+        grade: 6,
+        items: [
+          {
+            id: "G6-01", type: "A", points: 1, dok: 1, ccss: "6.RP.A.3",
+            stimulus: "<p>A car travels 180 miles in 3 hours at a constant speed.</p>",
+            prompt: "What is the speed of the car in miles per hour?",
+            rubric: { kind: "numeric", expected: 60 }
+          }
+        ]
+      }
+    };
+
+    /* App State Variables */
+    let activeFormId = "G4-FORM-A";
+    let isStudentMode = false;
+    let isStudentPreviewMode = false;
+    let studentName = "";
+    let enrolledGrade = "4";
+    let activeItemIdx = 0;
+    let studentResponses = {};
+    let flaggedItems = {};
+    let strikethroughs = {};
+    let strikeModeActive = false;
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let gasUrl = localStorage.getItem("sbac_gas_url") || "";
+
+    /* Helper: UTF-8 Base64 Encoding / Decoding for URLs */
+    function utf8ToBase64(str) {
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      }));
+    }
+    function base64ToUtf8(str) {
+      return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+    }
+
+    /* Initialize Application State on Page Load */
+    window.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
+
+      if (urlParams.get("mode") === "student" || hashParams.get("mode") === "student") {
+        isStudentMode = true;
+      }
+
+      // Check for custom webhook URL passed in query params
+      const passedGasUrl = urlParams.get("gasUrl") || hashParams.get("gasUrl");
+      if (passedGasUrl) {
+        gasUrl = passedGasUrl;
+        localStorage.setItem("sbac_gas_url", gasUrl);
+      }
+
+      // Check for inline payload in URL Hash (#testData=...) or Query Param
+      const payloadB64 = hashParams.get("testData") || urlParams.get("testData");
+      if (payloadB64) {
+        try {
+          const jsonStr = base64ToUtf8(payloadB64);
+          const parsedForm = JSON.parse(jsonStr);
+          if (parsedForm && parsedForm.id && Array.isArray(parsedForm.items)) {
+            FORMS[parsedForm.id] = parsedForm;
+            activeFormId = parsedForm.id;
+            if (parsedForm.gasUrl) {
+              gasUrl = parsedForm.gasUrl;
+              localStorage.setItem("sbac_gas_url", gasUrl);
+            }
+            updateFormDropdowns(parsedForm.id, parsedForm.title || parsedForm.id);
+          }
+        } catch (e) {
+          console.error("Error decoding inline testData from URL", e);
+        }
+      }
+
+      const testParam = urlParams.get("test") || hashParams.get("test");
+      if (testParam && FORMS[testParam]) {
+        activeFormId = testParam;
+      }
+
+      if (gasUrl) {
+        const gasInput = document.getElementById("gas-url-input");
+        if (gasInput) gasInput.value = gasUrl;
+        const statusMsg = document.getElementById("gas-status-msg");
+        if (statusMsg) statusMsg.textContent = "✓ Webhook URL configured and active: " + gasUrl;
+      }
+
+      if (isStudentMode) {
+        document.getElementById("student-preview-banner").style.display = "none";
+        document.getElementById("sbac-toolbar-strip").style.display = "flex";
+        document.getElementById("timer-badge-box").style.display = "flex";
+        document.getElementById("nav-btn-admin").style.display = "none";
+        document.getElementById("nav-btn-student").classList.add("active");
+        showView("student");
+        
+        // Open Modal ONLY — DO NOT start timer yet! Timer starts when student clicks "Start Practice Test"
+        document.getElementById("student-entry-modal").classList.add("open");
+      } else {
+        // Teacher Admin Mode Landing
+        document.getElementById("student-preview-banner").style.display = "none";
+        document.getElementById("sbac-toolbar-strip").style.display = "none";
+        document.getElementById("timer-badge-box").style.display = "none";
+        showView("admin");
+        loadFormById(activeFormId);
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    });
+
+    /* Timer Functions */
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerSeconds = 0;
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60).toString().padStart(2, "0");
+      const secs = (timerSeconds % 60).toString().padStart(2, "0");
+      document.getElementById("timer-display").textContent = `TIME ${mins}:${secs}`;
+    }
+
+    /* View Switcher */
+    function showView(viewId) {
+      document.querySelectorAll(".view-container").forEach(el => el.classList.remove("active"));
+      document.getElementById("view-" + viewId).classList.add("active");
+      
+      document.getElementById("nav-btn-admin").classList.toggle("active", viewId === "admin");
+      document.getElementById("nav-btn-student").classList.toggle("active", viewId === "student");
+
+      if (viewId === "admin") {
+        document.getElementById("sbac-toolbar-strip").style.display = "none";
+        document.getElementById("timer-badge-box").style.display = "none";
+        loadFormById(activeFormId);
+      } else if (viewId === "student") {
+        document.getElementById("sbac-toolbar-strip").style.display = "flex";
+        document.getElementById("timer-badge-box").style.display = "flex";
+        renderForm();
+      }
+    }
+
+    function showAdminSubtab(subId, btnEl) {
+      document.querySelectorAll(".admin-tab-bar .tab-btn").forEach(b => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      
+      ["links", "importer", "gas", "history"].forEach(id => {
+        const el = document.getElementById("admin-subtab-" + id);
+        if (el) el.style.display = (id === subId) ? "flex" : "none";
+      });
+
+      if (subId === "importer") {
+        loadFormById(activeFormId);
+      }
+    }
+
+    function loadFormById(formId) {
+      if (FORMS[formId]) {
+        activeFormId = formId;
+        const sel1 = document.getElementById("admin-form-selector");
+        if (sel1) sel1.value = formId;
+        const sel2 = document.getElementById("admin-form-selector-editor");
+        if (sel2) sel2.value = formId;
+
+        const textarea = document.getElementById("json-import-textarea");
+        if (textarea) {
+          textarea.value = JSON.stringify(FORMS[formId], null, 2);
+        }
+        refreshAdminShareLinks();
+      }
+    }
+
+    function updateFormDropdowns(formId, formTitle) {
+      ["admin-form-selector", "admin-form-selector-editor"].forEach(selId => {
+        const selector = document.getElementById(selId);
+        if (!selector) return;
+        let opt = selector.querySelector(`option[value="${formId}"]`);
+        if (!opt) {
+          opt = document.createElement("option");
+          opt.value = formId;
+          opt.textContent = formTitle.startsWith("Grade") || formTitle.startsWith("Custom") ? formTitle : `Custom: ${formTitle}`;
+          selector.appendChild(opt);
+        }
+        selector.value = formId;
+      });
+    }
+
+    function refreshAdminShareLinks() {
+      let base = window.location.href.split("#")[0].split("?")[0];
+      base = base.replace(/^blob:/i, "");
+      
+      const currentForm = FORMS[activeFormId];
+      if (gasUrl) {
+        currentForm.gasUrl = gasUrl;
+      }
+
+      let studentUrl = `${base}?mode=student&test=${encodeURIComponent(activeFormId)}`;
+
+      if (currentForm) {
+        try {
+          const jsonStr = JSON.stringify(currentForm);
+          const encoded = utf8ToBase64(jsonStr);
+          studentUrl += `#testData=${encoded}`;
+        } catch (e) {
+          console.error("Error encoding form for link", e);
+        }
+      }
+
+      document.getElementById("shareable-student-link").value = studentUrl;
+
+      const qrBox = document.getElementById("qr-code-box");
+      qrBox.innerHTML = `<div style="background:#ffffff;padding:12px;border:1px solid var(--outline-variant);border-radius:6px;width:max-content;">
+        <svg viewBox="0 0 100 100" width="120" height="120">
+          <rect x="0" y="0" width="100" height="100" fill="#ffffff"/>
+          <rect x="10" y="10" width="30" height="30" fill="#000000"/>
+          <rect x="15" y="15" width="20" height="20" fill="#ffffff"/>
+          <rect x="20" y="20" width="10" height="10" fill="#000000"/>
+
+          <rect x="60" y="10" width="30" height="30" fill="#000000"/>
+          <rect x="65" y="15" width="20" height="20" fill="#ffffff"/>
+          <rect x="70" y="20" width="10" height="10" fill="#000000"/>
+
+          <rect x="10" y="60" width="30" height="30" fill="#000000"/>
+          <rect x="15" y="65" width="20" height="20" fill="#ffffff"/>
+          <rect x="20" y="70" width="10" height="10" fill="#000000"/>
+
+          <rect x="50" y="50" width="15" height="15" fill="#000000"/>
+          <rect x="70" y="65" width="15" height="15" fill="#000000"/>
+        </svg>
+        <div style="font-size:0.75rem;font-weight:600;text-align:center;margin-top:4px;">Scan QR for Student Test</div>
+      </div>`;
+    }
+
+    function copyStudentLink() {
+      const linkInput = document.getElementById("shareable-student-link");
+      linkInput.select();
+      document.execCommand("copy");
+      alert("Student test URL with embedded test data copied to clipboard!");
+    }
+
+    function startStudentPreview() {
+      isStudentPreviewMode = true;
+      document.getElementById("student-preview-banner").style.display = "flex";
+      document.getElementById("sbac-toolbar-strip").style.display = "flex";
+      document.getElementById("timer-badge-box").style.display = "flex";
+      studentName = "Teacher Preview";
+      enrolledGrade = FORMS[activeFormId].grade;
+      activeItemIdx = 0;
+      showView("student");
+      renderForm();
+      startTimer();
+    }
+
+    function exitStudentPreview() {
+      isStudentPreviewMode = false;
+      stopTimer();
+      document.getElementById("student-preview-banner").style.display = "none";
+      document.getElementById("sbac-toolbar-strip").style.display = "none";
+      document.getElementById("timer-badge-box").style.display = "none";
+      showView("admin");
+    }
+
+    /* FIX 1: Timer starts ONLY when student clicks "Start Practice Test" */
+    function startStudentTest() {
+      const nameInp = document.getElementById("entry-student-name").value.trim();
+      const gradeInp = document.getElementById("entry-enrolled-grade").value;
+      
+      if (!nameInp) {
+        alert("Please enter your name to proceed.");
+        return;
+      }
+      studentName = nameInp;
+      enrolledGrade = gradeInp;
+
+      document.getElementById("student-entry-modal").classList.remove("open");
+      activeItemIdx = 0;
+      renderForm();
+      
+      // Start timer NOW after student completes modal entry
+      startTimer();
+    }
+
+    function renderForm() {
+      const form = FORMS[activeFormId];
+      document.getElementById("form-pill-display").textContent = `TEST • ENROLLED GR ${enrolledGrade} → TEST GR ${form.grade}`;
+
+      updateQNavStrip();
+      renderCurrentItem();
+    }
+
+    function updateQNavStrip() {
+      const form = FORMS[activeFormId];
+      const stripEl = document.getElementById("q-nav-strip");
+      if (!stripEl) return;
+
+      stripEl.innerHTML = form.items.map((it, idx) => {
+        const isAns = studentResponses[it.id] !== undefined && studentResponses[it.id] !== "";
+        const isAct = idx === activeItemIdx;
+        const isFlg = flaggedItems[it.id];
+        let cls = "q-item-btn";
+        if (isAct) cls += " current";
+        else if (isAns) cls += " answered";
+        if (isFlg) cls += " flagged";
+        return `<button type="button" class="${cls}" onclick="jumpToItem(${idx})">${idx + 1}</button>`;
+      }).join("");
+    }
+
+    function jumpToItem(idx) {
+      activeItemIdx = idx;
+      renderForm();
+    }
+
+    function prevItem() {
+      if (activeItemIdx > 0) {
+        activeItemIdx--;
+        renderForm();
+      }
+    }
+
+    function nextItem() {
+      const form = FORMS[activeFormId];
+      if (activeItemIdx < form.items.length - 1) {
+        activeItemIdx++;
+        renderForm();
+      }
+    }
+
+    function renderCurrentItem() {
+      const form = FORMS[activeFormId];
+      const item = form.items[activeItemIdx];
+
+      document.getElementById("item-number-title").textContent = `Question ${activeItemIdx + 1} of ${form.items.length}`;
+      document.getElementById("item-points-pill").textContent = `${item.points} POINT${item.points > 1 ? 'S' : ''}`;
+      
+      document.getElementById("side-ccss-display").textContent = `CCSS: ${item.ccss || 'General Math'}`;
+      document.getElementById("side-type-display").textContent = `Item Type: Type ${item.type}`;
+
+      document.getElementById("item-stimulus-box").innerHTML = item.stimulus || "";
+      document.getElementById("item-prompt-box").textContent = item.prompt || "";
+
+      // Render Flag State
+      const flagBtn = document.getElementById("tool-flag-btn");
+      if (flagBtn) flagBtn.classList.toggle("active", !!flaggedItems[item.id]);
+
+      // Render Response Controls
+      const container = document.getElementById("item-response-container");
+      container.innerHTML = renderResponseControls(item);
+
+      // Disable/Enable Prev/Next buttons
+      document.getElementById("btn-prev-item").disabled = activeItemIdx === 0;
+      const nextBtn = document.getElementById("btn-next-item");
+      if (activeItemIdx === form.items.length - 1) {
+        nextBtn.textContent = "Review & Submit";
+        nextBtn.onclick = openReviewModal;
+      } else {
+        nextBtn.textContent = "Next";
+        nextBtn.onclick = nextItem;
+      }
+    }
+
+    function renderResponseControls(item) {
+      const currentVal = studentResponses[item.id];
+      if (item.type === "A") {
+        const valStr = currentVal !== undefined ? currentVal : "";
+        return `<div>
+          <input type="text" id="type-a-input" class="carbon-input" value="${valStr}" oninput="saveResponse('${item.id}', this.value)" placeholder="Enter numerical answer...">
+          <div class="keypad-container">
+            <button type="button" class="key-btn" onclick="keypadInput('7')">7</button>
+            <button type="button" class="key-btn" onclick="keypadInput('8')">8</button>
+            <button type="button" class="key-btn" onclick="keypadInput('9')">9</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('/')">÷</button>
+            <button type="button" class="key-btn" onclick="keypadInput('4')">4</button>
+            <button type="button" class="key-btn" onclick="keypadInput('5')">5</button>
+            <button type="button" class="key-btn" onclick="keypadInput('6')">6</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('*')">×</button>
+            <button type="button" class="key-btn" onclick="keypadInput('1')">1</button>
+            <button type="button" class="key-btn" onclick="keypadInput('2')">2</button>
+            <button type="button" class="key-btn" onclick="keypadInput('3')">3</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('-')">-</button>
+            <button type="button" class="key-btn" onclick="keypadInput('0')">0</button>
+            <button type="button" class="key-btn" onclick="keypadInput('.')">.</button>
+            <button type="button" class="key-btn action" onclick="keypadInput('+')">+</button>
+            <button type="button" class="key-btn action" onclick="keypadBackspace()">⌫</button>
+          </div>
+        </div>`;
+      }
+      if (item.type === "B") {
+        return `<div class="option-list">` + item.options.map(opt => {
+          const isSel = currentVal === opt.id;
+          const isStruck = strikethroughs[item.id] && strikethroughs[item.id][opt.id];
+          let cls = "option-item";
+          if (isSel) cls += " selected";
+          if (isStruck) cls += " struck";
+          return `<div class="${cls}" onclick="selectOptionB('${item.id}', '${opt.id}')">
+            <input type="radio" name="opt-${item.id}" ${isSel ? 'checked' : ''} style="margin-top:3px;pointer-events:none;">
+            <span><strong>${opt.id}.</strong> ${opt.text}</span>
+          </div>`;
+        }).join("") + `</div>`;
+      }
+      if (item.type === "C") {
+        const gridVals = typeof currentVal === "object" && currentVal !== null ? currentVal : {};
+        return `<table class="matching-table">
+          <thead>
+            <tr><th>Statement / Expression</th><th>True</th><th>False</th></tr>
+          </thead>
+          <tbody>` + item.rows.map(r => {
+            const rowVal = gridVals[r.id];
+            return `<tr>
+              <td>${r.text}</td>
+              <td><input type="radio" name="grid-${item.id}-${r.id}" ${rowVal === 'True' ? 'checked' : ''} onclick="selectGridCell('${item.id}', '${r.id}', 'True')"></td>
+              <td><input type="radio" name="grid-${item.id}-${r.id}" ${rowVal === 'False' ? 'checked' : ''} onclick="selectGridCell('${item.id}', '${r.id}', 'False')"></td>
+            </tr>`;
+          }).join("") + `</tbody></table>`;
+      }
+      if (item.type === "D") {
+        const total = (item.diagramData && item.diagramData.total) || 8;
+        const shadedArr = Array.isArray(currentVal) ? currentVal : new Array(total).fill(false);
+        let partsHtml = "";
+        for (let i = 0; i < total; i++) {
+          const isShaded = shadedArr[i];
+          partsHtml += `<div class="fraction-part ${isShaded ? 'shaded' : ''}" onclick="toggleShadeCell('${item.id}', ${i}, ${total})"></div>`;
+        }
+        return `<div>
+          <p style="font-size:0.85rem;color:var(--on-surface-variant);margin-bottom:6px;">Click sections to shade or unshade:</p>
+          <div class="fraction-bar-interactive">${partsHtml}</div>
+          <button type="button" class="btn btn-ghost" onclick="clearShade('${item.id}', ${total})">Reset Shading</button>
+        </div>`;
+      }
+      if (item.type === "E") {
+        const selArr = Array.isArray(currentVal) ? currentVal : [];
+        return `<div class="option-list">` + item.options.map(opt => {
+          const isSel = selArr.includes(opt.id);
+          const isStruck = strikethroughs[item.id] && strikethroughs[item.id][opt.id];
+          let cls = "option-item";
+          if (isSel) cls += " selected";
+          if (isStruck) cls += " struck";
+          return `<div class="${cls}" onclick="toggleOptionE('${item.id}', '${opt.id}')">
+            <input type="checkbox" ${isSel ? 'checked' : ''} style="margin-top:3px;pointer-events:none;">
+            <span><strong>${opt.id}.</strong> ${opt.text}</span>
+          </div>`;
+        }).join("") + `</div>`;
+      }
+      return `<div>Unsupported item type</div>`;
+    }
+
+    function saveResponse(itemId, val) {
+      studentResponses[itemId] = val;
+      updateQNavStrip();
+    }
+
+    function keypadInput(ch) {
+      const inp = document.getElementById("type-a-input");
+      if (!inp) return;
+      inp.value += ch;
+      const form = FORMS[activeFormId];
+      const item = form.items[activeItemIdx];
+      saveResponse(item.id, inp.value);
+    }
+
+    function keypadBackspace() {
+      const inp = document.getElementById("type-a-input");
+      if (!inp) return;
+      inp.value = inp.value.slice(0, -1);
+      const form = FORMS[activeFormId];
+      const item = form.items[activeItemIdx];
+      saveResponse(item.id, inp.value);
+    }
+
+    function selectOptionB(itemId, optId) {
+      if (strikeModeActive) {
+        if (!strikethroughs[itemId]) strikethroughs[itemId] = {};
+        strikethroughs[itemId][optId] = !strikethroughs[itemId][optId];
+      } else {
+        studentResponses[itemId] = optId;
+      }
+      renderForm();
+    }
+
+    function toggleOptionE(itemId, optId) {
+      if (strikeModeActive) {
+        if (!strikethroughs[itemId]) strikethroughs[itemId] = {};
+        strikethroughs[itemId][optId] = !strikethroughs[itemId][optId];
+      } else {
+        let arr = Array.isArray(studentResponses[itemId]) ? [...studentResponses[itemId]] : [];
+        const idx = arr.indexOf(optId);
+        if (idx === -1) arr.push(optId);
+        else arr.splice(idx, 1);
+        studentResponses[itemId] = arr;
+      }
+      renderForm();
+    }
+
+    function selectGridCell(itemId, rowId, val) {
+      if (typeof studentResponses[itemId] !== "object" || studentResponses[itemId] === null) {
+        studentResponses[itemId] = {};
+      }
+      studentResponses[itemId][rowId] = val;
+      updateQNavStrip();
+    }
+
+    function toggleShadeCell(itemId, cellIdx, total) {
+      let arr = Array.isArray(studentResponses[itemId]) ? [...studentResponses[itemId]] : new Array(total).fill(false);
+      arr[cellIdx] = !arr[cellIdx];
+      studentResponses[itemId] = arr;
+      renderForm();
+    }
+
+    function clearShade(itemId, total) {
+      studentResponses[itemId] = new Array(total).fill(false);
+      renderForm();
+    }
+
+    function toggleFlagCurrent() {
+      const form = FORMS[activeFormId];
+      const item = form.items[activeItemIdx];
+      flaggedItems[item.id] = !flaggedItems[item.id];
+      renderForm();
+    }
+
+    function toggleStrikeMode() {
+      strikeModeActive = !strikeModeActive;
+      const btn = document.getElementById("tool-strike-btn");
+      if (btn) btn.classList.toggle("active", strikeModeActive);
+    }
+
+    /* Floating Draggable Scratchpad Window Controls */
+    let isScratchActive = false;
+    let scratchTool = "pen";
+    let isDrawing = false;
+
+    function toggleScratchpad() {
+      isScratchActive = !isScratchActive;
+      const box = document.getElementById("scratchpad-floating-window");
+      box.classList.toggle("open", isScratchActive);
+
+      if (isScratchActive) {
+        setupScratchCanvas();
+        makeScratchpadDraggable();
+      }
+    }
+
+    function setScratchTool(tool) {
+      scratchTool = tool;
+      document.getElementById("tool-pen-btn").classList.toggle("active", tool === "pen");
+      document.getElementById("tool-eraser-btn").classList.toggle("active", tool === "eraser");
+    }
+
+    function setupScratchCanvas() {
+      const canvas = document.getElementById("scratchpad-canvas");
+      canvas.width = canvas.offsetWidth || 440;
+      canvas.height = canvas.offsetHeight || 310;
+      const ctx = canvas.getContext("2d");
+
+      canvas.onpointerdown = function(e) {
+        isDrawing = true;
+        canvas.setPointerCapture(e.pointerId);
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      };
+      canvas.onpointermove = function(e) {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        if (scratchTool === "eraser") {
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 16;
+        } else {
+          ctx.strokeStyle = "#0f62fe";
+          ctx.lineWidth = 3;
+        }
+        ctx.lineCap = "round";
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+      };
+      canvas.onpointerup = canvas.onpointercancel = function(e) {
+        isDrawing = false;
+      };
+    }
+
+    function clearScratchCanvas() {
+      const canvas = document.getElementById("scratchpad-canvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function makeScratchpadDraggable() {
+      const box = document.getElementById("scratchpad-floating-window");
+      const header = document.getElementById("scratchpad-drag-header");
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      header.onpointerdown = function(e) {
+        if (e.target.closest(".scratch-tool-btn")) return;
+        isDragging = true;
+        header.setPointerCapture(e.pointerId);
+        
+        const rect = box.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        box.style.bottom = "auto";
+        box.style.right = "auto";
+        box.style.left = initialLeft + "px";
+        box.style.top = initialTop + "px";
+      };
+
+      header.onpointermove = function(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        const maxLeft = window.innerWidth - box.offsetWidth;
+        const maxTop = window.innerHeight - box.offsetHeight;
+        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+        newTop = Math.max(0, Math.min(newTop, maxTop));
+
+        box.style.left = newLeft + "px";
+        box.style.top = newTop + "px";
+      };
+
+      header.onpointerup = header.onpointercancel = function(e) {
+        isDragging = false;
+      };
+    }
+
+    /* Modal Controls */
+    function openReviewModal() {
+      const form = FORMS[activeFormId];
+      let completedCount = 0;
+
+      const itemsHtml = form.items.map((it, idx) => {
+        const val = studentResponses[it.id];
+        let isDone = false;
+        if (it.type === "C") {
+          isDone = typeof val === "object" && val !== null && Object.keys(val).length === it.rows.length;
+        } else if (it.type === "D" || it.type === "E") {
+          isDone = Array.isArray(val) && val.some(x => x === true || typeof x === "string");
+        } else {
+          isDone = val !== undefined && String(val).trim() !== "";
+        }
+        if (isDone) completedCount++;
+
+        const isFlg = flaggedItems[it.id];
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--outline-variant);">
+          <div>
+            <strong>Question ${idx + 1}</strong> (${it.ccss || 'Math'})
+            ${isFlg ? '<span style="color:var(--error);font-size:0.75rem;font-weight:700;margin-left:8px;">[FLAGGED]</span>' : ''}
+          </div>
+          <div>
+            ${isDone ? '<span style="color:var(--success);font-weight:600;font-size:0.85rem;">Answered</span>' : '<span style="color:var(--error);font-weight:600;font-size:0.85rem;">Unanswered</span>'}
+            <button type="button" class="btn btn-ghost" style="margin-left:8px;padding:2px 8px;font-size:0.75rem;" onclick="jumpToItemFromReview(${idx})">Go</button>
+          </div>
+        </div>`;
+      }).join("");
+
+      document.getElementById("review-summary-list").innerHTML = `
+        <div style="font-size:0.9rem;font-weight:600;margin-bottom:10px;">
+          Completed ${completedCount} of ${form.items.length} Questions
+        </div>
+        ${itemsHtml}
+      `;
+
+      document.getElementById("review-answers-modal").classList.add("open");
+    }
+
+    function closeReviewModal() {
+      document.getElementById("review-answers-modal").classList.remove("open");
+    }
+
+    function jumpToItemFromReview(idx) {
+      closeReviewModal();
+      jumpToItem(idx);
+    }
+
+    function confirmFinalSubmission() {
+      closeReviewModal();
+      stopTimer();
+      evaluateAndShowScore();
+    }
+
+    /* FIX 2: Webhook POST Submission for Google Apps Script with fallback */
+    function sendScoreToGas(payload) {
+      const url = gasUrl || localStorage.getItem("sbac_gas_url");
+      if (!url || !url.startsWith("http")) {
+        console.log("No GAS Webhook URL configured.");
+        return;
+      }
+
+      const bodyData = JSON.stringify(payload);
+
+      // Use mode: 'no-cors' with text/plain to avoid browser CORS preflight check on script.google.com
+      try {
+        fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain"
+          },
+          body: bodyData
+        }).then(() => {
+          console.log("Score posted to Google Apps Script Webhook successfully.");
+        }).catch(err => {
+          console.warn("Fetch to Google Apps Script failed, attempting sendBeacon fallback...", err);
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(url, bodyData);
+          }
+        });
+      } catch (e) {
+        console.warn("Error calling GAS fetch:", e);
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, bodyData);
+        }
+      }
+    }
+
+    function evaluateAndShowScore() {
+      const form = FORMS[activeFormId];
+      let earned = 0;
+      let possible = 0;
+      const results = [];
+
+      form.items.forEach(it => {
+        possible += it.points;
+        const resp = studentResponses[it.id];
+        let isCorrect = false;
+
+        if (it.rubric.kind === "numeric") {
+          const numVal = parseFloat(resp);
+          if (!isNaN(numVal) && numVal === it.rubric.expected) isCorrect = true;
+        } else if (it.rubric.kind === "exact") {
+          if (resp === it.rubric.expected) isCorrect = true;
+        } else if (it.rubric.kind === "grid") {
+          if (typeof resp === "object" && resp !== null) {
+            const matches = Object.keys(it.rubric.expected).every(k => resp[k] === it.rubric.expected[k]);
+            if (matches) isCorrect = true;
+          }
+        } else if (it.rubric.kind === "shading") {
+          if (Array.isArray(resp)) {
+            const shadedCount = resp.filter(Boolean).length;
+            if (shadedCount === it.rubric.targetShaded) isCorrect = true;
+          }
+        } else if (it.rubric.kind === "multi" || it.rubric.kind === "exactSet") {
+          if (Array.isArray(resp)) {
+            const isMatch = resp.length === it.rubric.expected.length && resp.every(x => it.rubric.expected.includes(x));
+            if (isMatch) isCorrect = true;
+          }
+        }
+
+        const pts = isCorrect ? it.points : 0;
+        earned += pts;
+        results.push({ item: it, isCorrect, earned: pts });
+      });
+
+      const pct = Math.round((earned / possible) * 100);
+
+      // Construct student submission payload
+      const payload = {
+        timestamp: new Date().toISOString(),
+        studentName: studentName || "Anonymous",
+        enrolledGrade: enrolledGrade || "N/A",
+        formId: activeFormId,
+        earned: earned,
+        possible: possible,
+        pct: pct,
+        attemptType: isStudentPreviewMode ? "Teacher Preview" : "Student Test",
+        itemResults: results.map(r => ({
+          itemId: r.item.id,
+          ccss: r.item.ccss,
+          isCorrect: r.isCorrect,
+          earned: r.earned,
+          points: r.item.points
+        }))
+      };
+
+      // Post payload to Google Apps Script Webhook
+      sendScoreToGas(payload);
+
+      // Save locally to attempt history
+      saveAttemptToLocalHistory(payload);
+
+      renderScoreReportHTML(form, earned, possible, pct, results);
+      document.getElementById("score-report-modal").classList.add("open");
+    }
+
+    function saveAttemptToLocalHistory(payload) {
+      const tbody = document.getElementById("history-table-body");
+      if (!tbody) return;
+      if (tbody.querySelector("td[colspan]")) {
+        tbody.innerHTML = "";
+      }
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><strong>${payload.studentName}</strong></td>
+        <td>Grade ${payload.enrolledGrade}</td>
+        <td>${payload.formId}</td>
+        <td>${payload.earned} / ${payload.possible}</td>
+        <td><strong>${payload.pct}%</strong></td>
+      `;
+      tbody.prepend(row);
+    }
+
+    function renderScoreReportHTML(form, earned, possible, pct, results) {
+      const body = document.getElementById("score-report-body");
+      let itemRows = results.map((r, i) => `<tr>
+        <td><strong>Q${i + 1}</strong> (${r.item.ccss})</td>
+        <td>${r.isCorrect ? '<span style="color:var(--success);font-weight:700;">Correct (+1)</span>' : '<span style="color:var(--error);font-weight:700;">Incorrect (0)</span>'}</td>
+      </tr>`).join("");
+
+      const activeGasUrl = gasUrl || localStorage.getItem("sbac_gas_url");
+      const gasStatusHtml = activeGasUrl 
+        ? `<div style="font-size:0.8rem;color:var(--success);font-weight:600;margin-top:6px;">✓ Student score transmitted to Google Sheet Webhook</div>`
+        : `<div style="font-size:0.8rem;color:var(--on-surface-variant);margin-top:6px;">Note: No Webhook URL linked for Google Sheet logging.</div>`;
+
+      body.innerHTML = `
+        <div style="background:var(--primary-container);padding:16px;border-radius:6px;margin-bottom:16px;">
+          <h3 style="font-size:1.1rem;font-weight:700;color:var(--primary);">${studentName || 'Student'} — Score: ${earned} / ${possible} (${pct}%)</h3>
+          <p style="font-size:0.85rem;color:var(--on-surface-variant);margin-top:4px;">Test Form: ${form.title}</p>
+          ${gasStatusHtml}
+        </div>
+        <table class="matching-table">
+          <thead>
+            <tr><th>Question / CCSS Standard</th><th>Result</th></tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+      `;
+    }
+
+    function closeScoreReport() {
+      document.getElementById("score-report-modal").classList.remove("open");
+      if (isStudentMode && !isStudentPreviewMode) {
+        alert("Thank you for completing the SBAC Math Assessment!");
+      }
+    }
+
+    function importCustomJson() {
+      const textarea = document.getElementById("json-import-textarea");
+      const raw = textarea.value.trim();
+      if (!raw) {
+        alert("Please paste or enter a valid JSON string.");
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed.id || !Array.isArray(parsed.items)) {
+          alert("Invalid test JSON format. Requires 'id' and 'items' array.");
+          return;
+        }
+
+        FORMS[parsed.id] = parsed;
+        activeFormId = parsed.id;
+
+        updateFormDropdowns(parsed.id, parsed.title || parsed.id);
+        refreshAdminShareLinks();
+        alert(`Test Form "${parsed.title || parsed.id}" saved/updated successfully!`);
+      } catch (err) {
+        alert("Error parsing JSON: " + err.message);
+      }
+    }
+
+    function exportCustomAppHtml() {
+      let docHtml = document.documentElement.outerHTML;
+      const formsJsString = "const FORMS = " + JSON.stringify(FORMS, null, 2) + ";";
+      
+      docHtml = docHtml.replace(/\/\* Built-in SBAC Test Forms Database \*\/[\s\S]*?\/\* App State Variables \*\//, 
+        "/* Built-in SBAC Test Forms Database */\n    " + formsJsString + "\n\n    /* App State Variables */"
+      );
+
+      const blob = new Blob([docHtml], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `sbac_practice_test_custom.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function saveGasUrl() {
+      const val = document.getElementById("gas-url-input").value.trim();
+      if (!val) {
+        alert("Please enter a valid Google Apps Script Web App URL.");
+        return;
+      }
+      gasUrl = val;
+      localStorage.setItem("sbac_gas_url", val);
+      document.getElementById("gas-status-msg").textContent = "✓ Webhook URL configured and active: " + val;
+      refreshAdminShareLinks();
+      alert("Google Apps Script Webhook URL saved successfully!");
+    }
+  </script>
+</body>
+</html>
